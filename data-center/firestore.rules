@@ -1,0 +1,53 @@
+rules_version = '2';
+
+// Paste this into Firebase console -> Firestore Database -> Rules -> Publish.
+// The owner email below is the Google account allowed to open the dashboard.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.get('email', '') == 'uhyun.kim11@gmail.com'
+        && request.auth.token.get('email_verified', false) == true;
+    }
+
+    function isSelf(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function validPlayer() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['name', 'stars', 'progress', 'firstSeen', 'lastSeen', 'sessions'])
+        && (!('name' in d) || (d.name is string && d.name.size() <= 40))
+        && (!('stars' in d) || (d.stars is int && d.stars >= 0 && d.stars <= 1000000))
+        && (!('sessions' in d) || (d.sessions is int && d.sessions >= 0))
+        && (!('progress' in d) || (d.progress is map && d.progress.keys().size() <= 100));
+    }
+
+    // One document per player (the document id is their anonymous user id).
+    match /players/{uid} {
+      allow read: if isOwner() || isSelf(uid);
+      allow create: if isSelf(uid) && validPlayer();
+      allow update: if isSelf(uid) && validPlayer()
+        && request.resource.data.firstSeen == resource.data.firstSeen;
+      allow delete: if isOwner();
+
+      // Things that happened while playing (append-only for players).
+      match /events/{eventId} {
+        allow read: if isOwner() || isSelf(uid);
+        allow create: if isSelf(uid)
+          && request.resource.data.keys().hasOnly(['game', 'type', 'data', 'at'])
+          && request.resource.data.game is string && request.resource.data.game.size() <= 60
+          && request.resource.data.type is string && request.resource.data.type.size() <= 60
+          && request.resource.data.data is map && request.resource.data.data.keys().size() <= 30;
+        allow delete: if isOwner();
+      }
+    }
+
+    // Lets the dashboard export every event across all players.
+    match /{path=**}/events/{eventId} {
+      allow read: if isOwner();
+    }
+  }
+}

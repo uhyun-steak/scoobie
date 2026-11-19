@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Data Center</title>
+<style>
+  :root {
+    --bg: #f6f7fb; --card: #ffffff; --ink: #1d2433; --mute: #6b7488; --line: #e4e7ef;
+    --accent: #4f5fe8; --accent-ink: #ffffff; --bad: #c93a3a; --bar: #cfd5ff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10131c; --card: #181c28; --ink: #e8ebf4; --mute: #97a0b5; --line: #272d3d;
+      --accent: #8794ff; --accent-ink: #10131c; --bad: #ff7b7b; --bar: #2b3360;
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  body::before {
+    content: ""; display: block; height: 6px;
+    background: linear-gradient(90deg, #ff5c5c, #ffb347, #ffe14d, #5fd068, #4aa8ff, #a46bff);
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 22px; margin: 0; }
+  h2 { font-size: 15px; margin: 0 0 12px; }
+  .mute { color: var(--mute); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  button {
+    font: inherit; cursor: pointer; border-radius: 10px; padding: 8px 14px;
+    border: 1px solid var(--line); background: var(--card); color: var(--ink);
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  button.danger { color: var(--bad); }
+  button:disabled { opacity: .5; cursor: default; }
+  input[type=search] {
+    font: inherit; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--card); color: var(--ink); min-width: 220px; flex: 1;
+  }
+
+  #login { min-height: 80vh; display: grid; place-items: center; padding: 16px; }
+  #login .card { max-width: 380px; width: 100%; text-align: center; padding: 28px; }
+  #login p { margin: 8px 0 18px; }
+  #loginMsg { color: var(--bad); margin: 14px 0 0; font-size: 14px; }
+
+  header.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  header.top .sp { flex: 1; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 12px; }
+  .stat .n { font-size: 28px; font-weight: 700; line-height: 1.1; }
+  .stat .l { color: var(--mute); font-size: 13px; }
+
+  .games .row { display: grid; grid-template-columns: 140px 1fr 40px; gap: 10px; align-items: center; margin: 6px 0; font-size: 14px; }
+  .games .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .games .track { background: var(--line); border-radius: 6px; height: 10px; overflow: hidden; }
+  .games .fill { background: var(--accent); height: 100%; }
+  .games .val { text-align: right; color: var(--mute); }
+
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 10px; align-items: center; }
+  .tablewrap { overflow-x: auto; padding: 0; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  thead th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--mute); cursor: pointer; user-select: none; }
+  thead th.sorted { color: var(--ink); }
+  tbody tr { cursor: pointer; }
+  tbody tr:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.num { font-variant-numeric: tabular-nums; }
+  .id { color: var(--mute); font-size: 12px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  #empty { padding: 28px; text-align: center; color: var(--mute); }
+
+  dialog { border: 1px solid var(--line); border-radius: 16px; padding: 0; width: min(760px, 94vw); background: var(--card); color: var(--ink); }
+  dialog::backdrop { background: rgba(0, 0, 0, .45); }
+  .dlg { padding: 20px; max-height: 86vh; overflow: auto; }
+  .dlg h2 { font-size: 20px; margin-bottom: 2px; }
+  .mini { display: flex; gap: 24px; margin: 14px 0; }
+  .mini .n { font-size: 22px; font-weight: 700; }
+  pre {
+    background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+    overflow: auto; max-height: 200px; margin: 6px 0 16px; font-size: 13px;
+  }
+  code { font-size: 12px; }
+  .evwrap { max-height: 260px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; }
+  .evwrap td, .evwrap th { padding: 6px 10px; font-size: 13px; cursor: default; }
+  .evwrap td:last-child { white-space: normal; word-break: break-word; }
+  .dfoot { display: flex; justify-content: space-between; margin-top: 16px; gap: 8px; }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="card">
+    <h1>Data Center</h1>
+    <p class="mute">Owner sign-in</p>
+    <button id="signin" class="primary">Sign in with Google</button>
+    <div id="loginMsg" role="alert"></div>
+  </div>
+</div>
+
+<div id="app" class="wrap" hidden>
+  <header class="top">
+    <h1>Data Center</h1>
+    <span class="sp"></span>
+    <span class="mute" id="who"></span>
+    <button id="signout">Sign out</button>
+  </header>
+
+  <section class="stats">
+    <div class="card stat"><div class="n" id="sTotal">0</div><div class="l">Players</div></div>
+    <div class="card stat"><div class="n" id="sStars">0</div><div class="l">Stars earned (all players)</div></div>
+    <div class="card stat"><div class="n" id="sDay">0</div><div class="l">Active in last 24 hours</div></div>
+    <div class="card stat"><div class="n" id="sWeek">0</div><div class="l">Active in last 7 days</div></div>
+  </section>
+
+  <section class="card games">
+    <h2>Players per game</h2>
+    <div id="games"></div>
+  </section>
+
+  <div class="toolbar">
+    <input type="search" id="search" placeholder="Search by name, id or game">
+    <button id="exportPlayers">Export players (CSV)</button>
+    <button id="exportEvents">Export all events (CSV)</button>
+  </div>
+
+  <div class="card tablewrap">
+    <table>
+      <thead>
+        <tr>
+          <th data-key="name">Player</th>
+          <th data-key="stars">Stars</th>
+          <th data-key="games">Games</th>
+          <th data-key="sessions">Visits</th>
+          <th data-key="lastSeen">Last seen</th>
+          <th data-key="firstSeen">First seen</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div id="empty" hidden>No players yet.</div>
+  </div>
+  <p class="mute" id="count"></p>
+</div>
+
+<dialog id="detail">
+  <div class="dlg">
+    <h2 id="dName"></h2>
+    <div class="mute" id="dMeta" style="font-size:13px"></div>
+    <div class="mini">
+      <div><div class="n" id="dStars">0</div><div class="mute">Stars</div></div>
+      <div><div class="n" id="dSessions">0</div><div class="mute">Visits</div></div>
+    </div>
+    <h2>Progress by game</h2>
+    <pre id="dProgress"></pre>
+    <h2>Recent events (latest 100)</h2>
+    <div class="evwrap">
+      <table>
+        <thead><tr><th>When</th><th>Game</th><th>Type</th><th>Details</th></tr></thead>
+        <tbody id="dEvents"></tbody>
+      </table>
+    </div>
+    <div class="dfoot">
+      <button id="dDelete" class="danger">Delete this player</button>
+      <button id="dClose">Close</button>
+    </div>
+  </div>
+</dialog>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="../firebase-config.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  // Player names come from the public, so every value is escaped before it is shown.
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function say(text) { $('loginMsg').textContent = text || ''; }
+  function showLogin() { $('login').hidden = false; $('app').hidden = true; }
+  function showApp() { $('login').hidden = true; $('app').hidden = false; }
+
+  var cfg = window.FIREBASE_CONFIG;
+  if (!cfg || !cfg.apiKey || String(cfg.apiKey).indexOf('PASTE') === 0) {
+    say('Setup needed: open firebase-config.js and paste your Firebase settings (see README.md).');
+    $('signin').disabled = true;
+    return;
+  }
+
+  // A separate app name keeps the owner login apart from the players' anonymous logins.
+  var app = firebase.initializeApp(cfg, 'admin');
+  var auth = app.auth();
+  var db = app.firestore();
+
+  var players = [];
+  var unsub = null;
+  var sortKey = 'lastSeen';
+  var sortDir = -1;
+  var filter = '';
+  var selectedId = null;
+
+  var dtf = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+  function when(t) { return t ? dtf.format(new Date(t)) : '-'; }
+  function ago(t) {
+    if (!t) return '-';
+    var s = (Date.now() - t) / 1000;
+    if (s < 60) return 'just now';
+    if (s < 3600) return Math.floor(s / 60) + ' min ago';
+    if (s < 86400) return Math.floor(s / 3600) + ' h ago';
+    return Math.floor(s / 86400) + ' d ago';
+  }
+  function ms(t) { return t && typeof t.toMillis === 'function' ? t.toMillis() : 0; }
+
+  function norm(id, d) {
+    var progress = d.progress && typeof d.progress === 'object' ? d.progress : {};
+    return {
+      id: id,
+      name: String(d.name || ''),
+      stars: Number(d.stars) || 0,
+      sessions: Number(d.sessions) || 0,
+      progress: progress,
+      games: Object.keys(progress),
+      firstSeen: ms(d.firstSeen),
+      lastSeen: ms(d.lastSeen)
+    };
+  }
+
+  // ---- sign in / out ------------------------------------------------------
+  $('signin').onclick = function () {
+    say('');
+    auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(function (e) { say(e.message); });
+  };
+  $('signout').onclick = function () { auth.signOut(); };
+
+  auth.onAuthStateChanged(function (user) {
+    if (unsub) { unsub(); unsub = null; }
+    players = [];
+    if (!user || user.isAnonymous) { showLogin(); return; }
+    $('who').textContent = user.email || '';
+    showApp();
+    listen(user);
+  });
+
+  function listen(user) {
+    unsub = db.collection('players').limit(2000).onSnapshot(function (snap) {
+      players = snap.docs.map(function (d) { return norm(d.id, d.data()); });
+      render();
+    }, function (err) {
+      if (err && err.code === 'permission-denied') {
+        var email = user.email;
+        auth.signOut().then(function () {
+          say(email + ' is not the owner. Put this exact email in firestore.rules (OWNER_EMAIL_HERE) and publish the rules.');
+        });
+      } else {
+        say((err && err.message) || 'Could not load data.');
+        showLogin();
+      }
+    });
+  }
+
+  // ---- table --------------------------------------------------------------
+  function visible() {
+    var q = filter.toLowerCase();
+    var list = players.filter(function (p) {
+      return !q || p.name.toLowerCase().indexOf(q) >= 0 ||
+        p.id.toLowerCase().indexOf(q) >= 0 ||
+        p.games.join(' ').toLowerCase().indexOf(q) >= 0;
+    });
+    list.sort(function (a, b) {
+      var x = a[sortKey], y = b[sortKey];
+      if (sortKey === 'name') { x = x.toLowerCase(); y = y.toLowerCase(); }
+      if (sortKey === 'games') { x = a.games.length; y = b.games.length; }
+      return (x > y ? 1 : x < y ? -1 : 0) * sortDir;
+    });
+    return list;
+  }
+
+  function render() {
+    var now = Date.now();
+    var stars = 0, day = 0, week = 0, perGame = {};
+    players.forEach(function (p) {
+      stars += p.stars;
+      if (p.lastSeen && now - p.lastSeen < 86400000) day++;
+      if (p.lastSeen && now - p.lastSeen < 7 * 86400000) week++;
+      p.games.forEach(function (g) { perGame[g] = (perGame[g] || 0) + 1; });
+    });
+    $('sTotal').textContent = players.length;
+    $('sStars').textContent = stars;
+    $('sDay').textContent = day;
+    $('sWeek').textContent = week;
+
+    var names = Object.keys(perGame).sort(function (a, b) { return perGame[b] - perGame[a]; });
+    $('games').innerHTML = names.length ? names.map(function (g) {
+      var pct = players.length ? Math.round(perGame[g] / players.length * 100) : 0;
+      return '<div class="row"><span class="name" title="' + esc(g) + '">' + esc(g) + '</span>' +
+        '<span class="track"><span class="fill" style="display:block;width:' + pct + '%"></span></span>' +
+        '<span class="val">' + perGame[g] + '</span></div>';
+    }).join('') : '<span class="mute">No game progress saved yet.</span>';
+
+    var list = visible();
+    $('rows').innerHTML = list.map(function (p) {
+      return '<tr data-id="' + esc(p.id) + '">' +
+        '<td>' + (p.name ? esc(p.name) : '<span class="mute">(no name)</span>') +
+        ' <span class="id">' + esc(p.id.slice(0, 6)) + '</span></td>' +
+        '<td class="num">' + p.stars + '</td>' +
+        '<td class="num">' + p.games.length + '</td>' +
+        '<td class="num">' + p.sessions + '</td>' +
+        '<td title="' + esc(when(p.lastSeen)) + '">' + esc(ago(p.lastSeen)) + '</td>' +
+        '<td>' + esc(when(p.firstSeen)) + '</td></tr>';
+    }).join('');
+    $('empty').hidden = list.length > 0;
+    $('empty').textContent = players.length ? 'No players match your search.' : 'No players yet.';
+    $('count').textContent = list.length === players.length
+      ? players.length + ' players'
+      : list.length + ' of ' + players.length + ' players';
+
+    Array.prototype.forEach.call(document.querySelectorAll('thead th[data-key]'), function (th) {
+      th.classList.toggle('sorted', th.getAttribute('data-key') === sortKey);
+    });
+  }
+
+  document.querySelector('thead').addEventListener('click', function (e) {
+    var th = e.target.closest('th[data-key]');
+    if (!th) return;
+    var key = th.getAttribute('data-key');
+    if (key === sortKey) sortDir = -sortDir; else { sortKey = key; sortDir = key === 'name' ? 1 : -1; }
+    render();
+  });
+  $('search').addEventListener('input', function () { filter = this.value; render(); });
+  $('rows').addEventListener('click', function (e) {
+    var tr = e.target.closest('tr[data-id]');
+    if (tr) openDetail(tr.getAttribute('data-id'));
+  });
+
+  // ---- player detail ------------------------------------------------------
+  function openDetail(id) {
+    var p = players.filter(function (x) { return x.id === id; })[0];
+    if (!p) return;
+    selectedId = id;
+    $('dName').textContent = p.name || '(no name)';
+    $('dMeta').textContent = 'ID ' + p.id + ' | first seen ' + when(p.firstSeen) + ' | last seen ' + when(p.lastSeen);
+    $('dStars').textContent = p.stars;
+    $('dSessions').textContent = p.sessions;
+    $('dProgress').textContent = p.games.length ? JSON.stringify(p.progress, null, 2) : 'No progress saved yet.';
+    $('dEvents').innerHTML = '<tr><td colspan="4" class="mute">Loading...</td></tr>';
+    $('detail').showModal();
+
+    db.collection('players').doc(id).collection('events').orderBy('at', 'desc').limit(100).get()
+      .then(function (snap) {
+        if (selectedId !== id) return;
+        if (snap.empty) {
+          $('dEvents').innerHTML = '<tr><td colspan="4" class="mute">No events recorded.</td></tr>';
+          return;
+        }
+        $('dEvents').innerHTML = snap.docs.map(function (d) {
+          var e = d.data();
+          return '<tr><td>' + esc(when(ms(e.at))) + '</td><td>' + esc(e.game) + '</td><td>' + esc(e.type) +
+            '</td><td><code>' + esc(JSON.stringify(e.data || {})) + '</code></td></tr>';
+        }).join('');
+      })
+      .catch(function (err) {
+        $('dEvents').innerHTML = '<tr><td colspan="4" class="mute">' + esc(err.message) + '</td></tr>';
+      });
+  }
+
+  $('dClose').onclick = function () { $('detail').close(); };
+  $('detail').addEventListener('click', function (e) { if (e.target === this) this.close(); });
+
+  $('dDelete').onclick = function () {
+    var id = selectedId;
+    var p = players.filter(function (x) { return x.id === id; })[0];
+    if (!p) return;
+    if (!confirm('Permanently delete "' + (p.name || p.id) + '" and all of their events? This cannot be undone.')) return;
+    $('dDelete').disabled = true;
+    deletePlayer(id).then(function () {
+      $('detail').close();
+    }).catch(function (err) {
+      alert('Could not delete: ' + err.message);
+    }).then(function () {
+      $('dDelete').disabled = false;
+    });
+  };
+
+  function deletePlayer(id) {
+    var events = db.collection('players').doc(id).collection('events');
+    function wipe() {
+      return events.limit(400).get().then(function (snap) {
+        if (snap.empty) return null;
+        var batch = db.batch();
+        snap.docs.forEach(function (d) { batch.delete(d.ref); });
+        return batch.commit().then(wipe);
+      });
+    }
+    return wipe().then(function () { return db.collection('players').doc(id).delete(); });
+  }
+
+  // ---- CSV export ---------------------------------------------------------
+  function cell(v) {
+    v = v == null ? '' : String(v);
+    if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; // stop spreadsheet formula injection
+    return '"' + v.replace(/"/g, '""') + '"';
+  }
+  function download(filename, rows) {
+    var text = '﻿' + rows.map(function (r) { return r.map(cell).join(','); }).join('\r\n');
+    var url = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+  function stamp() { return new Date().toISOString().slice(0, 10); }
+
+  $('exportPlayers').onclick = function () {
+    var rows = [['id', 'name', 'stars', 'visits', 'games', 'first_seen', 'last_seen', 'progress_json']];
+    visible().forEach(function (p) {
+      rows.push([
+        p.id, p.name, p.stars, p.sessions, p.games.join(' '),
+        p.firstSeen ? new Date(p.firstSeen).toISOString() : '',
+        p.lastSeen ? new Date(p.lastSeen).toISOString() : '',
+        JSON.stringify(p.progress)
+      ]);
+    });
+    download('players-' + stamp() + '.csv', rows);
+  };
+
+  $('exportEvents').onclick = function () {
+    var btn = $('exportEvents');
+    var LIMIT = 10000;
+    btn.disabled = true;
+    btn.textContent = 'Exporting...';
+    var names = {};
+    players.forEach(function (p) { names[p.id] = p.name; });
+    db.collectionGroup('events').limit(LIMIT).get().then(function (snap) {
+      var rows = [['player_id', 'player_name', 'when', 'game', 'type', 'data_json']];
+      snap.docs.forEach(function (d) {
+        var e = d.data();
+        var pid = d.ref.parent.parent.id;
+        rows.push([pid, names[pid] || '', ms(e.at) ? new Date(ms(e.at)).toISOString() : '', e.game, e.type, JSON.stringify(e.data || {})]);
+      });
+      download('events-' + stamp() + '.csv', rows);
+      if (snap.size >= LIMIT) alert('Exported the first ' + LIMIT + ' events. There may be more.');
+    }).catch(function (err) {
+      alert('Could not export: ' + err.message);
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = 'Export all events (CSV)';
+    });
+  };
+})();
+</script>
+</body>
+</html>
