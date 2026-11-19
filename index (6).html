@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fun Learning Academy 🍄 - Adventure Quiz World</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;800;900&family=Jua&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-heading: 'Fredoka', 'Jua', cursive, sans-serif;
+    --font-body: 'Nunito', 'Jua', sans-serif;
+    --wood-dark: #4e2f12;
+    --wood: #8b5a2b;
+    --wood-light: #c68642;
+    --cream: #fff3d6;
+    --grass: #6fd33f;
+    --grass-dark: #3d8f24;
+    --dirt: #9a6a35;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: linear-gradient(180deg, #3aa8ff 0%, #86d2ff 55%, #cfeeff 100%);
+    background-attachment: fixed;
+    color: #4a2e12;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-heading { font-family: var(--font-heading); }
+
+  /* ---------- Animations ---------- */
+  @keyframes floatSlow { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10px) rotate(2deg); } }
+  @keyframes floatIsland { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+  @keyframes floatCloud { 0% { transform: translateX(-10%); } 50% { transform: translateX(10%); } 100% { transform: translateX(-10%); } }
+  @keyframes pulsePlay { 0%,100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255,210,63,0)); } 50% { transform: scale(1.06); filter: drop-shadow(0 0 16px rgba(255,210,63,.9)); } }
+  @keyframes bounceCute { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px) scale(1.03); } }
+  @keyframes earWiggle { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
+  @keyframes wobbleWrong { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-8px) rotate(-3deg); } 40%,80% { transform: translateX(8px) rotate(3deg); } }
+  @keyframes popSuccess { 0% { transform: scale(0.9); opacity: 0.8; } 50% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes sparkle { 0%,100% { opacity: .2; transform: scale(.6) rotate(0deg); } 50% { opacity: 1; transform: scale(1.1) rotate(25deg); } }
+  @keyframes noteRise { 0% { transform: translateY(0) rotate(-8deg); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-60px) rotate(10deg); opacity: 0; } }
+  @keyframes levelUp { 0% { transform: translate(-50%, 20px) scale(.6); opacity: 0; } 20% { transform: translate(-50%, 0) scale(1.1); opacity: 1; } 80% { transform: translate(-50%, 0) scale(1); opacity: 1; } 100% { transform: translate(-50%, -30px) scale(1); opacity: 0; } }
+
+  .anim-float { animation: floatSlow 4s ease-in-out infinite; }
+  .anim-island { animation: floatIsland 5s ease-in-out infinite; }
+  .anim-island-2 { animation: floatIsland 6.5s ease-in-out infinite reverse; }
+  .anim-pulse-play { animation: pulsePlay 1.8s ease-in-out infinite; }
+  .anim-cloud-left { animation: floatCloud 14s ease-in-out infinite; }
+  .anim-cloud-right { animation: floatCloud 18s ease-in-out infinite reverse; }
+  .anim-bounce { animation: bounceCute 2.5s ease-in-out infinite; }
+  .anim-wiggle { animation: earWiggle 3s ease-in-out infinite; }
+  .anim-wobble { animation: wobbleWrong 0.5s ease-in-out; }
+  .anim-pop { animation: popSuccess 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  .anim-sparkle { animation: sparkle 2.4s ease-in-out infinite; }
+  .anim-note { animation: noteRise 3s ease-in infinite; }
+
+  /* ---------- Title (thick outlined adventure lettering) ---------- */
+  .title-3d {
+    font-family: var(--font-heading);
+    color: #ffd23f;
+    -webkit-text-stroke: 7px #6b3410;
+    paint-order: stroke fill;
+    text-shadow: 0 6px 0 #6b3410, 0 12px 16px rgba(0,0,0,0.35);
+    letter-spacing: 3px;
+  }
+  .title-3d-sub {
+    font-family: var(--font-heading);
+    color: #ff8a3d;
+    -webkit-text-stroke: 7px #5a1f0a;
+    paint-order: stroke fill;
+    text-shadow: 0 6px 0 #5a1f0a, 0 12px 16px rgba(0,0,0,0.35);
+    letter-spacing: 3px;
+  }
+  .brand-text {
+    font-family: var(--font-heading);
+    color: #fff3d6;
+    -webkit-text-stroke: 4px #3a2008;
+    paint-order: stroke fill;
+    text-shadow: 0 3px 0 #3a2008;
+  }
+
+  /* ---------- Game-window style panels (class name kept: cloud-card) ---------- */
+  .cloud-card {
+    background: linear-gradient(180deg, #fffaf0 0%, #fff1cf 100%);
+    border: 4px solid #6b4220;
+    border-radius: 1.25rem;
+    box-shadow:
+      inset 0 0 0 3px #f6d58a,
+      0 8px 0 rgba(60, 35, 10, 0.35),
+      0 14px 24px rgba(0, 0, 0, 0.22);
+  }
+
+  /* ---------- Wooden header bar with grass fringe ---------- */
+  .wood-bar {
+    background:
+      repeating-linear-gradient(90deg, rgba(0,0,0,.10) 0 2px, transparent 2px 70px),
+      linear-gradient(180deg, #a06a32 0%, #8b5a2b 55%, #744a22 100%);
+    border-bottom: 6px solid var(--wood-dark);
+  }
+  .wood-bar::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 100%;
+    height: 16px;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 10px 0, var(--grass) 9px, transparent 10px) 0 0 / 20px 16px repeat-x;
+    filter: drop-shadow(0 3px 0 var(--grass-dark));
+  }
+
+  .nav-on  { background: linear-gradient(180deg,#ffa24a,#f2711c); color: #fff; border: 3px solid #ffd9a8; }
+  .nav-off { background: linear-gradient(180deg,#fff7e2,#f6e2b6); color: #5b3a1a; border: 3px solid #c68642; }
+  .nav-off:hover { background: #fff; }
+
+  .coin-badge {
+    background: linear-gradient(180deg,#3a2008,#2b1a0a);
+    border: 3px solid #f6d58a;
+    color: #ffd23f;
+  }
+  .exp-track {
+    background: #2b1a0a;
+    border: 2px solid #f6d58a;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .exp-fill {
+    height: 100%;
+    background: linear-gradient(180deg, #d9ff7a 0%, #7be04a 55%, #3fae3a 100%);
+    border-radius: 999px;
+    transition: width .5s ease;
+  }
+  .exp-fill-quiz {
+    height: 100%;
+    background: linear-gradient(180deg, #ffe680 0%, #ffc233 55%, #f29a0a 100%);
+    border-radius: 999px;
+    transition: width .5s ease;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.5);
+  }
+
+  /* ---------- Grassy wooden quest cards ---------- */
+  .game-card-box {
+    position: relative;
+    background: linear-gradient(180deg, #b27a3d 0%, #7d4f23 100%);
+    border: 4px solid var(--wood-dark);
+    border-radius: 1.1rem;
+    padding: 0 0 6px;
+    box-shadow: 0 9px 0 rgba(40, 22, 6, 0.45), 0 12px 18px rgba(0, 0, 0, 0.22);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .game-card-box::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 22px;
+    background:
+      radial-gradient(circle at 10px 16px, var(--grass-dark) 7px, transparent 8px) 0 0 / 20px 22px repeat-x,
+      var(--grass);
+    z-index: 2;
+  }
+  .game-card-box:hover { transform: translateY(-8px) scale(1.04); box-shadow: 0 17px 0 rgba(40, 22, 6, 0.4), 0 14px 24px rgba(0, 0, 0, 0.28); }
+  .game-card-box:active { transform: translateY(2px) scale(0.98); box-shadow: 0 4px 0 rgba(40, 22, 6, 0.5); }
+
+  .plank {
+    background: linear-gradient(180deg, #fff7e2, #f3dcaa);
+    border: 3px solid var(--wood-dark);
+    border-radius: .7rem;
+    color: #4a2e12;
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn-bubble {
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 6px 0 rgba(40, 22, 6, 0.35);
+  }
+  .btn-bubble:hover:not(:disabled) { transform: translateY(-3px) scale(1.02); box-shadow: 0 9px 0 rgba(40, 22, 6, 0.3); }
+  .btn-bubble:active:not(:disabled) { transform: translateY(2px) scale(0.98); box-shadow: 0 3px 0 rgba(40, 22, 6, 0.35); }
+
+  .maple-answer {
+    background: linear-gradient(180deg, #fffaf0, #f6e2b6);
+    border: 4px solid #8b5a2b;
+    color: #4a2e12;
+  }
+  .maple-answer:hover:not(:disabled) { background: #fff; border-color: #f2711c; }
+  .maple-answer.is-correct {
+    background: linear-gradient(180deg, #e6ffd0, #b8f08a);
+    border-color: #3d8f24;
+    color: #1f5d10;
+  }
+
+  .start-btn {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    color: #fff;
+    text-shadow: 0 3px 0 #7a2e06, 0 0 8px rgba(122,46,6,.6);
+    background: linear-gradient(180deg, #ffc233 0%, #ff8a1f 55%, #e8620c 100%);
+    border: 5px solid #fff1b8;
+    outline: 5px solid #6b3410;
+    border-radius: 1.4rem;
+    padding: .8rem 2.4rem;
+    box-shadow: 0 10px 0 #6b3410, 0 16px 24px rgba(0,0,0,.3);
+    cursor: pointer;
+    transition: transform .15s;
+  }
+  .start-btn:active { transform: translateY(4px) scale(.98); box-shadow: 0 4px 0 #6b3410; }
+
+  /* ---------- Start-screen ground, fence ---------- */
+  .ground {
+    position: relative;
+    height: 84px;
+    background:
+      radial-gradient(circle at 15px 54px, #7d4f23 4px, transparent 5px) 0 0 / 34px 34px,
+      linear-gradient(180deg, #7be04a 0, #7be04a 14px, #3d8f24 14px, #3d8f24 22px, #a56f38 22px, #8a5a2b 100%);
+    border-top: 4px solid #2f7a1a;
+  }
+  .fence {
+    position: absolute;
+    left: 0; right: 0;
+    height: 46px;
+    background:
+      repeating-linear-gradient(90deg, #a56a2f 0 12px, transparent 12px 46px),
+      linear-gradient(#b07a3f, #b07a3f) 0 12px / 100% 7px no-repeat,
+      linear-gradient(#b07a3f, #b07a3f) 0 28px / 100% 7px no-repeat;
+    filter: drop-shadow(0 2px 0 rgba(60,35,10,.5));
+  }
+
+  .levelup-banner {
+    position: fixed;
+    top: 110px; left: 50%;
+    z-index: 100;
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: 2rem;
+    color: #ffd23f;
+    -webkit-text-stroke: 6px #6b3410;
+    paint-order: stroke fill;
+    text-shadow: 0 5px 0 #6b3410;
+    pointer-events: none;
+    white-space: nowrap;
+    animation: levelUp 2.2s ease forwards;
+  }
+
+  #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 99; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col relative select-none">
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ==========================================================================
+     SHARED ARTWORK (SVG symbols reused around the page)
+     ========================================================================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="tree" viewBox="0 0 100 140">
+      <rect x="43" y="78" width="14" height="62" rx="4" fill="#7a4b1e"/>
+      <circle cx="50" cy="50" r="38" fill="#3fae3a"/>
+      <circle cx="28" cy="68" r="24" fill="#3fae3a"/>
+      <circle cx="72" cy="68" r="24" fill="#3fae3a"/>
+      <circle cx="42" cy="38" r="16" fill="#6fd35e" opacity=".7"/>
+    </symbol>
+
+    <symbol id="mush-house" viewBox="0 0 140 140">
+      <rect x="42" y="68" width="56" height="64" rx="10" fill="#fff0cf" stroke="#9a6a35" stroke-width="4"/>
+      <rect x="58" y="94" width="24" height="38" rx="12" fill="#8b5a2b"/>
+      <circle cx="75" cy="112" r="2.5" fill="#ffd23f"/>
+      <rect x="48" y="78" width="14" height="12" rx="3" fill="#bfe8ff" stroke="#9a6a35" stroke-width="2"/>
+      <path d="M8 76 C8 20 132 20 132 76 C132 86 110 90 70 90 C30 90 8 86 8 76Z" fill="currentColor" stroke="rgba(0,0,0,.35)" stroke-width="4"/>
+      <circle cx="40" cy="52" r="9" fill="#fff"/>
+      <circle cx="76" cy="40" r="11" fill="#fff"/>
+      <circle cx="106" cy="60" r="8" fill="#fff"/>
+      <circle cx="58" cy="70" r="6" fill="#fff"/>
+    </symbol>
+
+    <symbol id="cloud" viewBox="0 0 200 100">
+      <path d="M 30,60 A 25,25 0 0,1 60,35 A 35,35 0 0,1 120,30 A 25,25 0 0,1 160,55 A 20,20 0 0,1 180,75 A 15,15 0 0,1 165,90 L 25,90 A 15,15 0 0,1 30,60 Z" fill="white"/>
+    </symbol>
+
+    <symbol id="island" viewBox="0 0 220 100">
+      <path d="M10 24 H210 C205 50 170 62 150 80 C135 95 90 95 72 78 C55 62 18 52 10 24Z" fill="#9a6a35" stroke="#5b3a1a" stroke-width="4"/>
+      <path d="M6 26 C6 8 30 6 60 10 H160 C195 6 214 8 214 26 C214 34 200 36 190 30 C180 38 168 36 160 30 C150 38 138 36 128 30 C116 38 104 36 96 30 C84 38 70 36 62 30 C50 38 36 36 28 30 C18 36 6 34 6 26Z" fill="#6fd33f" stroke="#2f7a1a" stroke-width="4"/>
+    </symbol>
+
+    <symbol id="ladder" viewBox="0 0 40 200">
+      <rect x="6" y="0" width="5" height="200" rx="2" fill="#7a4b1e"/>
+      <rect x="29" y="0" width="5" height="200" rx="2" fill="#7a4b1e"/>
+      <g fill="#a56a2f" stroke="#5b3a1a" stroke-width="1.5">
+        <rect x="6" y="10" width="28" height="6" rx="2"/><rect x="6" y="36" width="28" height="6" rx="2"/>
+        <rect x="6" y="62" width="28" height="6" rx="2"/><rect x="6" y="88" width="28" height="6" rx="2"/>
+        <rect x="6" y="114" width="28" height="6" rx="2"/><rect x="6" y="140" width="28" height="6" rx="2"/>
+        <rect x="6" y="166" width="28" height="6" rx="2"/><rect x="6" y="190" width="28" height="6" rx="2"/>
+      </g>
+    </symbol>
+
+    <symbol id="signpost" viewBox="0 0 90 130">
+      <rect x="40" y="10" width="10" height="120" rx="3" fill="#7a4b1e"/>
+      <path d="M6 24 L24 12 H72 V38 H24 Z" fill="#d9a05b" stroke="#5b3a1a" stroke-width="3"/>
+      <path d="M84 56 L66 44 H18 V70 H66 Z" fill="#e8b878" stroke="#5b3a1a" stroke-width="3"/>
+      <circle cx="45" cy="26" r="2" fill="#5b3a1a"/><circle cx="45" cy="57" r="2" fill="#5b3a1a"/>
+    </symbol>
+
+    <symbol id="critter-mush" viewBox="0 0 100 100">
+      <ellipse cx="50" cy="78" rx="24" ry="18" fill="#fff0cf" stroke="#9a6a35" stroke-width="3"/>
+      <path d="M8 58 C8 12 92 12 92 58 C92 66 72 68 50 68 C28 68 8 66 8 58Z" fill="currentColor" stroke="rgba(0,0,0,.35)" stroke-width="3"/>
+      <circle cx="30" cy="40" r="7" fill="#fff"/><circle cx="64" cy="30" r="8" fill="#fff"/><circle cx="76" cy="52" r="5" fill="#fff"/>
+      <circle cx="41" cy="76" r="3" fill="#2b1a0a"/><circle cx="59" cy="76" r="3" fill="#2b1a0a"/>
+      <path d="M45 83 Q50 87 55 83" stroke="#2b1a0a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="slime" viewBox="0 0 100 100">
+      <path d="M10 80 C6 40 30 14 50 14 C70 14 94 40 90 80 C90 88 10 88 10 80Z" fill="currentColor" stroke="rgba(0,0,0,.3)" stroke-width="3"/>
+      <ellipse cx="34" cy="38" rx="8" ry="12" fill="#fff" opacity=".45" transform="rotate(20 34 38)"/>
+      <circle cx="38" cy="58" r="4" fill="#1b2a1b"/><circle cx="62" cy="58" r="4" fill="#1b2a1b"/>
+      <path d="M44 68 Q50 73 56 68" stroke="#1b2a1b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- Guide characters used as mascots on the pages -->
+    <symbol id="npc-sage" viewBox="0 0 120 120">
+      <ellipse cx="60" cy="88" rx="30" ry="26" fill="#fff0cf" stroke="#9a6a35" stroke-width="3"/>
+      <path d="M12 66 C12 12 108 12 108 66 C108 76 84 80 60 80 C36 80 12 76 12 66Z" fill="#8b5cf6" stroke="#4c2a9a" stroke-width="4"/>
+      <circle cx="36" cy="48" r="9" fill="#fff"/><circle cx="72" cy="34" r="10" fill="#fff"/><circle cx="92" cy="58" r="7" fill="#fff"/>
+      <circle cx="48" cy="86" r="4" fill="#2b1a0a"/><circle cx="72" cy="86" r="4" fill="#2b1a0a"/>
+      <path d="M54 96 Q60 101 66 96" stroke="#2b1a0a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M28 22 L60 8 L92 22 L60 34Z" fill="#1e1b4b"/>
+      <path d="M90 23 V42" stroke="#fbbf24" stroke-width="3"/><circle cx="90" cy="44" r="4" fill="#fbbf24"/>
+    </symbol>
+
+    <symbol id="npc-shop" viewBox="0 0 120 120">
+      <path d="M14 98 C8 52 34 18 60 18 C86 18 112 52 106 98 C106 108 14 108 14 98Z" fill="#5ed36a" stroke="#2f7a3a" stroke-width="4"/>
+      <ellipse cx="40" cy="48" rx="9" ry="14" fill="#fff" opacity=".45" transform="rotate(20 40 48)"/>
+      <circle cx="44" cy="74" r="5" fill="#16301b"/><circle cx="76" cy="74" r="5" fill="#16301b"/>
+      <path d="M52 86 Q60 93 68 86" stroke="#16301b" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M60 18 C46 0 76 -4 82 10 C74 16 68 18 60 18Z" fill="#2f9e44" stroke="#1f6b2e" stroke-width="2"/>
+      <circle cx="100" cy="100" r="12" fill="#ffd23f" stroke="#b7791f" stroke-width="3"/>
+      <text x="100" y="105" font-size="14" font-weight="900" text-anchor="middle" fill="#b7791f">$</text>
+    </symbol>
+
+    <symbol id="npc-blue" viewBox="0 0 120 120">
+      <ellipse cx="60" cy="88" rx="30" ry="26" fill="#fff0cf" stroke="#9a6a35" stroke-width="3"/>
+      <path d="M12 66 C12 12 108 12 108 66 C108 76 84 80 60 80 C36 80 12 76 12 66Z" fill="#38bdf8" stroke="#0369a1" stroke-width="4"/>
+      <circle cx="36" cy="48" r="9" fill="#fff"/><circle cx="72" cy="34" r="10" fill="#fff"/><circle cx="92" cy="58" r="7" fill="#fff"/>
+      <circle cx="48" cy="86" r="4" fill="#2b1a0a"/><circle cx="72" cy="86" r="4" fill="#2b1a0a"/>
+      <path d="M54 96 Q60 101 66 96" stroke="#2b1a0a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M36 98 Q60 112 84 98 L84 106 Q60 120 36 106Z" fill="#ef4444"/>
+    </symbol>
+
+    <symbol id="npc-pink" viewBox="0 0 120 120">
+      <path d="M14 98 C8 52 34 18 60 18 C86 18 112 52 106 98 C106 108 14 108 14 98Z" fill="#f9a8d4" stroke="#be185d" stroke-width="4"/>
+      <ellipse cx="40" cy="48" rx="9" ry="14" fill="#fff" opacity=".5" transform="rotate(20 40 48)"/>
+      <circle cx="44" cy="74" r="5" fill="#500724"/><circle cx="76" cy="74" r="5" fill="#500724"/>
+      <path d="M52 86 Q60 93 68 86" stroke="#500724" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="34" cy="86" r="6" fill="#fb7185" opacity=".6"/><circle cx="86" cy="86" r="6" fill="#fb7185" opacity=".6"/>
+      <path d="M60 20 L40 6 L40 30Z" fill="#ec4899"/><path d="M60 20 L80 6 L80 30Z" fill="#ec4899"/><circle cx="60" cy="20" r="6" fill="#be185d"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ==========================================================================
+     WORLD BACKDROP (fixed scenery behind all pages)
+     ========================================================================== -->
+<div id="world-bg" class="fixed inset-0 pointer-events-none" style="z-index:0">
+  <svg class="absolute bottom-0 left-0 w-full" style="height:70%" viewBox="0 0 1600 640" preserveAspectRatio="xMidYMax slice">
+    <path d="M0 640 V380 L150 230 L290 350 L450 170 L640 360 L800 240 L980 380 L1160 190 L1340 350 L1480 250 L1600 340 V640Z" fill="#7bc4d8"/>
+    <path d="M450 170 L520 240 L470 232 L450 258 L420 228 L395 236Z" fill="#e8f9ff" opacity=".85"/>
+    <path d="M1160 190 L1230 262 L1182 254 L1160 280 L1132 250 L1108 258Z" fill="#e8f9ff" opacity=".85"/>
+    <path d="M0 640 V460 C200 380 380 450 560 420 C760 390 900 330 1100 400 C1300 470 1450 400 1600 440 V640Z" fill="#8bdc5a"/>
+    <path d="M0 640 V540 C250 480 450 540 700 510 C950 480 1150 540 1350 500 C1450 480 1540 500 1600 520 V640Z" fill="#62c43a"/>
+    <use href="#tree" x="60" y="380" width="100" height="140"/>
+    <use href="#tree" x="190" y="410" width="80" height="112"/>
+    <use href="#mush-house" x="420" y="352" width="130" height="130" style="color:#ff7a2f"/>
+    <use href="#tree" x="620" y="400" width="90" height="126"/>
+    <use href="#mush-house" x="960" y="340" width="140" height="140" style="color:#e04a4a"/>
+    <use href="#tree" x="1180" y="390" width="100" height="140"/>
+    <use href="#mush-house" x="1330" y="372" width="120" height="120" style="color:#ff9f2f"/>
+    <use href="#tree" x="1500" y="410" width="80" height="112"/>
+  </svg>
+  <svg class="absolute top-10 left-6 w-44 opacity-90 anim-cloud-left"><use href="#cloud" width="176" height="88"/></svg>
+  <svg class="absolute top-24 right-10 w-56 opacity-90 anim-cloud-right"><use href="#cloud" width="224" height="112"/></svg>
+  <svg class="absolute top-1/3 left-1/3 w-36 opacity-70 anim-cloud-right"><use href="#cloud" width="144" height="72"/></svg>
+</div>
+
+<!-- ==========================================================================
+     START SCREEN OVERLAY
+     ========================================================================== -->
+<div id="start-screen" class="fixed inset-0 z-50 flex flex-col overflow-hidden transition-opacity duration-700" style="background:linear-gradient(180deg,#3aa8ff 0%,#8fd6ff 55%,#d7f3ff 100%)">
+
+  <!-- Scenery: mountains, hills, trees, mushroom houses -->
+  <svg class="absolute bottom-0 left-0 w-full pointer-events-none" style="height:62%" viewBox="0 0 1600 560" preserveAspectRatio="xMidYMax slice">
+    <path d="M0 560 V330 L160 180 L300 300 L460 110 L640 310 L800 190 L980 330 L1160 130 L1340 300 L1480 200 L1600 290 V560Z" fill="#7bc4d8"/>
+    <path d="M0 560 V400 L120 300 L260 380 L420 270 L600 390 L780 300 L960 400 L1140 290 L1320 390 L1480 310 L1600 380 V560Z" fill="#9fd9e8"/>
+    <path d="M0 560 V400 C200 330 380 390 560 370 C760 350 900 290 1100 350 C1300 410 1450 350 1600 390 V560Z" fill="#8bdc5a"/>
+    <path d="M0 560 V470 C250 410 450 470 700 440 C950 410 1150 470 1350 430 C1450 410 1540 430 1600 450 V560Z" fill="#62c43a"/>
+    <use href="#tree" x="40" y="330" width="110" height="154"/>
+    <use href="#tree" x="170" y="370" width="80" height="112"/>
+    <use href="#mush-house" x="300" y="320" width="150" height="150" style="color:#ff7a2f"/>
+    <use href="#tree" x="520" y="350" width="90" height="126"/>
+    <use href="#mush-house" x="1000" y="310" width="160" height="160" style="color:#e04a4a"/>
+    <use href="#tree" x="1210" y="340" width="100" height="140"/>
+    <use href="#mush-house" x="1330" y="340" width="130" height="130" style="color:#ff9f2f"/>
+    <use href="#tree" x="1480" y="360" width="90" height="126"/>
+  </svg>
+
+  <!-- Sky layer: clouds, floating islands, sparkles, music button -->
+  <div class="absolute inset-x-0 top-0 h-1/3 min-h-[160px] pointer-events-none">
+    <svg class="absolute top-2 left-10 w-48 opacity-90 anim-cloud-left"><use href="#cloud" width="192" height="96"/></svg>
+    <svg class="absolute top-6 right-16 w-56 opacity-90 anim-cloud-right"><use href="#cloud" width="224" height="112"/></svg>
+    <svg class="absolute top-16 left-1/4 w-28 anim-island"><use href="#island" width="112" height="51"/></svg>
+    <svg class="absolute top-20 right-1/4 w-32 anim-island-2"><use href="#island" width="128" height="58"/></svg>
+    <span class="absolute top-8 left-1/3 text-2xl anim-sparkle">✨</span>
+    <span class="absolute top-14 right-1/3 text-xl anim-sparkle" style="animation-delay:.8s">✨</span>
+    <span class="absolute top-28 left-12 text-2xl anim-note">🎵</span>
+    <span class="absolute top-32 right-14 text-2xl anim-note" style="animation-delay:1.2s">🎶</span>
+
+    <button onclick="toggleAudio()" class="pointer-events-auto absolute top-4 left-4 sm:top-6 sm:left-6 w-12 h-12 sm:w-14 sm:h-14 bg-amber-400 border-4 border-amber-100 rounded-full flex items-center justify-center shadow-lg text-2xl hover:scale-110 active:scale-95 transition-transform" title="Toggle Music">
+      <span id="start-audio-icon">🎵</span>
+    </button>
+  </div>
+
+  <!-- Center: title, name tag, start button -->
+  <div class="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 overflow-y-auto">
+    <div class="mb-4 transform hover:scale-105 transition-transform">
+      <div class="title-3d text-5xl sm:text-7xl md:text-8xl font-extrabold uppercase leading-none">FUN</div>
+      <div class="title-3d-sub text-5xl sm:text-7xl md:text-8xl font-extrabold uppercase leading-none mt-1">LEARNING</div>
+    </div>
+
+    <div class="pointer-events-auto cloud-card p-4 sm:p-5 max-w-sm w-full mb-6 space-y-2">
+      <label for="player-name-input" class="block font-black text-amber-900 text-lg sm:text-xl">🏷️ Character Name:</label>
+      <input type="text" id="player-name-input" placeholder="Type name here..." maxlength="15" value="Super Learner" class="w-full text-center font-black text-xl sm:text-2xl text-amber-950 bg-white border-4 rounded-2xl py-2 px-4 focus:outline-none shadow-inner" style="border-color:#c68642">
+    </div>
+
+    <button id="start-play-btn" onclick="startAppFromScreen()" class="pointer-events-auto start-btn anim-pulse-play">
+      GAME START ▶
+    </button>
+  </div>
+
+  <!-- Ground: critters, signpost, fence, grass -->
+  <div class="relative z-10 w-full flex-shrink-0">
+    <div class="absolute left-0 right-0 px-4 sm:px-16 flex items-end justify-between pointer-events-none" style="bottom:74px">
+      <div class="flex items-end gap-3 sm:gap-5">
+        <svg class="w-16 h-16 sm:w-20 sm:h-20 anim-bounce" style="color:#2dd4bf" viewBox="0 0 100 100"><use href="#critter-mush" width="100" height="100"/></svg>
+        <svg class="w-12 h-12 sm:w-16 sm:h-16 anim-bounce" style="color:#5ed36a;animation-delay:.6s" viewBox="0 0 100 100"><use href="#slime" width="100" height="100"/></svg>
+      </div>
+      <svg class="w-14 h-20 sm:w-20 sm:h-28 hidden sm:block" viewBox="0 0 90 130"><use href="#signpost" width="90" height="130"/></svg>
+      <div class="flex items-end gap-3 sm:gap-5">
+        <svg class="w-12 h-12 sm:w-16 sm:h-16 anim-bounce" style="color:#f9a8d4;animation-delay:.3s" viewBox="0 0 100 100"><use href="#slime" width="100" height="100"/></svg>
+        <svg class="w-16 h-16 sm:w-20 sm:h-20 anim-bounce" style="color:#a78bfa;animation-delay:.9s" viewBox="0 0 100 100"><use href="#critter-mush" width="100" height="100"/></svg>
+      </div>
+    </div>
+    <div class="fence" style="bottom:70px"></div>
+    <div class="ground"></div>
+  </div>
+</div>
+
+<!-- Main Header Bar -->
+<header class="sticky top-0 z-40 wood-bar shadow-lg">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+    <button onclick="showStartScreenAgain()" class="w-12 h-12 bg-pink-500 hover:bg-pink-600 text-white border-4 border-pink-200 rounded-2xl flex items-center justify-center text-xl shadow-md btn-bubble" title="Return to Start Screen">
+      ⬅
+    </button>
+
+    <div onclick="go('home')" class="flex items-center gap-2.5 cursor-pointer group">
+      <div class="w-10 h-10 bg-amber-400 border-2 border-amber-100 rounded-2xl flex items-center justify-center text-xl shadow-md group-hover:rotate-12 transition-transform">
+        🍄
+      </div>
+      <span class="brand-text text-xl sm:text-2xl md:text-3xl font-black">Fun Learning Academy</span>
+    </div>
+
+    <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+      <!-- Level & EXP -->
+      <div class="coin-badge rounded-xl px-3 py-1.5 flex items-center gap-2" title="Earn stars to level up!">
+        <span class="font-heading font-black text-sm" style="color:#ffd23f">Lv.<span id="level-num">1</span></span>
+        <div class="exp-track w-20 sm:w-28 h-3"><div id="exp-fill" class="exp-fill" style="width:0%"></div></div>
+        <span id="exp-text" class="text-[10px] font-black text-amber-100">0%</span>
+      </div>
+
+      <button id="voice-toggle-btn" onclick="toggleVoice()" class="btn-bubble bg-sky-400 hover:bg-sky-300 text-sky-950 font-bold px-3 py-2 rounded-2xl flex items-center gap-1.5 text-xs sm:text-sm border-2 border-sky-100">
+        <span id="voice-icon">🔊</span>
+        <span id="voice-text">Voice ON</span>
+      </button>
+
+      <button id="audio-toggle-btn" onclick="toggleAudio()" class="btn-bubble bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold px-3 py-2 rounded-2xl flex items-center gap-1.5 text-xs sm:text-sm border-2 border-amber-100">
+        <span id="audio-icon">🎵</span>
+        <span id="audio-text">Music ON</span>
+      </button>
+
+      <div class="coin-badge rounded-2xl px-3.5 py-1.5 font-black text-sm sm:text-base flex items-center gap-1 shadow-sm">
+        <span class="text-lg animate-bounce">⭐</span>
+        <span id="points">0</span>
+      </div>
+
+      <button onclick="showStartScreenAgain()" class="w-10 h-10 bg-sky-600 text-white border-2 border-sky-200 rounded-xl flex items-center justify-center text-sm font-black btn-bubble" title="Logout">
+        🚪
+      </button>
+    </div>
+  </div>
+
+  <nav class="max-w-6xl mx-auto px-4 pb-3 flex justify-center sm:justify-start gap-2 overflow-x-auto">
+    <button data-page="home" onclick="go('home')" class="navbtn btn-bubble nav-on font-extrabold px-4 py-1.5 rounded-xl text-sm">🏠 Home</button>
+    <button data-page="progress" onclick="go('progress')" class="navbtn btn-bubble nav-off font-extrabold px-4 py-1.5 rounded-xl text-sm">📈 Progress</button>
+    <button data-page="shop" onclick="go('shop')" class="navbtn btn-bubble nav-off font-extrabold px-4 py-1.5 rounded-xl text-sm">🎁 Prize Shop</button>
+    <button data-page="rewards" onclick="go('rewards')" class="navbtn btn-bubble nav-off font-extrabold px-4 py-1.5 rounded-xl text-sm">🏆 My Rewards</button>
+  </nav>
+</header>
+
+<!-- Main App Container -->
+<main id="app" class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full relative z-10"></main>
+
+<!-- Custom Modal -->
+<div id="custom-modal" class="hidden fixed inset-0 z-50 bg-sky-950/40 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="cloud-card max-w-md w-full p-6 text-center anim-pop">
+    <div id="modal-icon" class="text-5xl mb-3">🎉</div>
+    <h3 id="modal-title" class="text-2xl font-black text-amber-900 mb-2">Notice</h3>
+    <p id="modal-msg" class="text-amber-800 text-base font-bold mb-6"></p>
+    <div id="modal-actions" class="flex justify-center gap-3"></div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   TRIAL DATABASE (IndexedDB, with localStorage fallback)
+   --------------------------------------------------------------------------
+   Every finished quiz is stored as one "trial" record, so progress can be
+   tracked across many attempts instead of only the latest result.
+
+   Store: "trials"  (keyPath: id, autoIncrement)
+   Record shape:
+     { id, player, subjectId, subjectName, attempt,   // attempt = Nth try of this
+       correct, total, percent, perfect, stars,       //   subject by this player
+       timestamp, answers: [{ q, chosen, right, ok }] }
+   Indexes: player, subjectId, player_subject [player, subjectId], timestamp
+   ========================================================================== */
+const DB_NAME = 'fla-db';
+const DB_VERSION = 1;
+const TRIAL_STORE = 'trials';
+const LS_TRIALS_KEY = 'fla-trials';
+let dbPromise = null;
+
+function openDB() {
+  if (dbPromise) return dbPromise;
+  dbPromise = new Promise((resolve, reject) => {
+    if (!('indexedDB' in window)) { reject(new Error('IndexedDB not supported')); return; }
+    let req;
+    try { req = indexedDB.open(DB_NAME, DB_VERSION); } catch (e) { reject(e); return; }
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(TRIAL_STORE)) {
+        const st = db.createObjectStore(TRIAL_STORE, { keyPath: 'id', autoIncrement: true });
+        st.createIndex('player', 'player');
+        st.createIndex('subjectId', 'subjectId');
+        st.createIndex('player_subject', ['player', 'subjectId']);
+        st.createIndex('timestamp', 'timestamp');
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+    req.onblocked = () => reject(new Error('IndexedDB blocked'));
+  });
+  return dbPromise;
+}
+
+/* localStorage fallback (used only if IndexedDB is unavailable, e.g. some private modes) */
+function lsReadTrials() {
+  try { return JSON.parse(localStorage.getItem(LS_TRIALS_KEY) || '[]'); } catch (e) { return []; }
+}
+function lsWriteTrials(arr) {
+  try { localStorage.setItem(LS_TRIALS_KEY, JSON.stringify(arr)); } catch (e) {}
+}
+
+async function dbAddTrial(trial) {
+  try {
+    const db = await openDB();
+    return await new Promise((resolve, reject) => {
+      const tx = db.transaction(TRIAL_STORE, 'readwrite');
+      const st = tx.objectStore(TRIAL_STORE);
+      const countReq = st.index('player_subject').count(IDBKeyRange.only([trial.player, trial.subjectId]));
+      countReq.onsuccess = () => {
+        trial.attempt = countReq.result + 1;
+        st.add(trial);
+      };
+      tx.oncomplete = () => resolve(trial);
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+  } catch (e) {
+    const arr = lsReadTrials();
+    trial.attempt = arr.filter(t => t.player === trial.player && t.subjectId === trial.subjectId).length + 1;
+    trial.id = Date.now() + Math.random();
+    arr.push(trial);
+    lsWriteTrials(arr);
+    return trial;
+  }
+}
+
+async function dbGetAllTrials() {
+  try {
+    const db = await openDB();
+    return await new Promise((resolve, reject) => {
+      const req = db.transaction(TRIAL_STORE, 'readonly').objectStore(TRIAL_STORE).getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  } catch (e) {
+    return lsReadTrials();
+  }
+}
+
+/* Delete one player's trials, or everything when player is null */
+async function dbDeleteTrials(player) {
+  try {
+    const db = await openDB();
+    return await new Promise((resolve, reject) => {
+      const tx = db.transaction(TRIAL_STORE, 'readwrite');
+      const st = tx.objectStore(TRIAL_STORE);
+      if (player === null) {
+        st.clear();
+      } else {
+        const cur = st.index('player').openCursor(IDBKeyRange.only(player));
+        cur.onsuccess = () => {
+          const c = cur.result;
+          if (c) { c.delete(); c.continue(); }
+        };
+      }
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  } catch (e) {
+    const arr = lsReadTrials();
+    lsWriteTrials(player === null ? [] : arr.filter(t => t.player !== player));
+  }
+}
+
+function esc(str) {
+  return String(str).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+
+/* Audio Synthesizer & Speech Setup */
+let audioCtx = null;
+let isAudioMuted = false;
+let isVoiceMuted = false;
+let bgmInterval = null;
+let bgmStep = 0;
+const synth = window.speechSynthesis;
+
+/* App Data State */
+let data = JSON.parse(localStorage.getItem('fla-data') || 'null') || { points: 0, completed: [], redeemed: [], playerName: 'Super Learner', unfinished: [] };
+if (typeof data.earned !== 'number') data.earned = data.points || 0;   // lifetime stars, drives the level bar
+let current = 'home';
+let activeSubject = null;
+let qIndex = 0;
+let correct = 0;
+let answered = false;
+let trialAnswers = [];   // answers given during the quiz in progress (saved with the trial)
+
+/* ---------- Level / EXP (lifetime stars earned; spending stars never lowers your level) ---------- */
+const EXP_PER_LEVEL = 50;
+function levelInfo() {
+  const e = data.earned || 0;
+  return { lvl: Math.floor(e / EXP_PER_LEVEL) + 1, exp: e % EXP_PER_LEVEL };
+}
+function addPoints(n) {
+  const before = levelInfo().lvl;
+  data.points += n;
+  data.earned = (data.earned || 0) + n;
+  if (levelInfo().lvl > before) showLevelUp(levelInfo().lvl);
+}
+function showLevelUp(lvl) {
+  const el = document.createElement('div');
+  el.className = 'levelup-banner';
+  el.textContent = '⬆ LEVEL UP!  Lv.' + lvl;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2300);
+  playFanfareSound();
+}
+
+/* High-Quality Friendly Voice Synthesis */
+function speak(text) {
+  if (isVoiceMuted || !('speechSynthesis' in window)) return;
+
+  initAudio();
+  window.speechSynthesis.cancel();
+
+  setTimeout(() => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.volume = 1.0;
+    utterance.pitch = 1.4; // Soft, upbeat, friendly child pitch
+    utterance.rate = 0.85; // Clear, easy-to-understand speaking pace
+
+    const voices = window.speechSynthesis.getVoices();
+    if (voices && voices.length > 0) {
+      const childVoice = voices.find(v => 
+        v.lang.startsWith('en') && 
+        (v.name.includes('Samantha') || v.name.includes('Victoria') || v.name.includes('Google US English') || v.name.includes('Karen') || v.name.includes('Female'))
+      ) || voices.find(v => v.lang.startsWith('en'));
+
+      if (childVoice) {
+        utterance.voice = childVoice;
+      }
+    }
+
+    window.speechSynthesis.speak(utterance);
+  }, 60);
+}
+
+function stopSpeech() {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+}
+
+function toggleVoice() {
+  isVoiceMuted = !isVoiceMuted;
+  const icon = document.getElementById('voice-icon');
+  const text = document.getElementById('voice-text');
+  const btn = document.getElementById('voice-toggle-btn');
+  
+  if (isVoiceMuted) {
+    stopSpeech();
+    if (icon) icon.textContent = '🔇';
+    if (text) text.textContent = 'Voice OFF';
+    if (btn) btn.classList.replace('bg-sky-400', 'bg-gray-300');
+  } else {
+    if (icon) icon.textContent = '🔊';
+    if (text) text.textContent = 'Voice ON';
+    if (btn) btn.classList.replace('bg-gray-300', 'bg-sky-400');
+    speak("Hello there! Voice narration is on!");
+  }
+}
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+/* Gentle Melodic Background Music Chimes */
+const bgmNotes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 440.00, 349.23, 392.00, 523.25, 659.25, 523.25];
+function startBGM() {
+  if (bgmInterval || isAudioMuted) return;
+  bgmInterval = setInterval(() => {
+    if (isAudioMuted || !audioCtx) return;
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = bgmNotes[bgmStep % bgmNotes.length];
+      gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0005, audioCtx.currentTime + 0.7);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.75);
+      bgmStep++;
+    } catch(e){}
+  }, 800);
+}
+
+function stopBGM() {
+  if (bgmInterval) {
+    clearInterval(bgmInterval);
+    bgmInterval = null;
+  }
+}
+
+function toggleAudio() {
+  initAudio();
+  isAudioMuted = !isAudioMuted;
+  const icon = document.getElementById('audio-icon');
+  const text = document.getElementById('audio-text');
+  const btn = document.getElementById('audio-toggle-btn');
+  const startIcon = document.getElementById('start-audio-icon');
+  
+  if (isAudioMuted) {
+    stopBGM();
+    if (icon) icon.textContent = '🔇';
+    if (text) text.textContent = 'Music OFF';
+    if (btn) btn.classList.replace('bg-amber-400', 'bg-gray-300');
+    if (startIcon) startIcon.textContent = '🔇';
+  } else {
+    startBGM();
+    if (icon) icon.textContent = '🎵';
+    if (text) text.textContent = 'Music ON';
+    if (btn) btn.classList.replace('bg-gray-300', 'bg-amber-400');
+    if (startIcon) startIcon.textContent = '🎵';
+    playClickSound();
+  }
+}
+
+/* Warm & Friendly Sound Effects */
+function playClickSound() {
+  if (isAudioMuted) return;
+  initAudio();
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.09);
+  } catch(e){}
+}
+
+function playCorrectSound() {
+  if (isAudioMuted) return;
+  initAudio();
+  const notes = [523.25, 659.25, 783.99, 1046.50];
+  notes.forEach((freq, idx) => {
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const startTime = audioCtx.currentTime + (idx * 0.08);
+      gain.gain.setValueAtTime(0.1, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + 0.28);
+    } catch(e){}
+  });
+}
+
+function playWrongSound() {
+  if (isAudioMuted) return;
+  initAudio();
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(330, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(261.63, audioCtx.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.23);
+  } catch(e){}
+}
+
+function playFanfareSound() {
+  if (isAudioMuted) return;
+  initAudio();
+  const arpeggio = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50, 1318.51];
+  arpeggio.forEach((freq, idx) => {
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const startTime = audioCtx.currentTime + (idx * 0.09);
+      gain.gain.setValueAtTime(0.12, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + 0.32);
+    } catch(e){}
+  });
+}
+
+function playCoinsSound() {
+  if (isAudioMuted) return;
+  initAudio();
+  try {
+    const osc1 = audioCtx.createOscillator();
+    const osc2 = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc1.type = 'sine';
+    osc2.type = 'sine';
+    osc1.frequency.setValueAtTime(987.77, audioCtx.currentTime);
+    osc2.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.07);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc1.start();
+    osc2.start(audioCtx.currentTime + 0.07);
+    osc1.stop(audioCtx.currentTime + 0.26);
+    osc2.stop(audioCtx.currentTime + 0.28);
+  } catch(e){}
+}
+
+/* Canvas Confetti */
+const confettiCanvas = document.getElementById('confetti-canvas');
+const ctx = confettiCanvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function launchConfetti() {
+  particles = [];
+  const colors = ['#f472b6', '#38bdf8', '#fbbf24', '#34d399', '#a78bfa', '#fb7185'];
+  for (let i = 0; i < 90; i++) {
+    particles.push({
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2 - 50,
+      vx: (Math.random() - 0.5) * 14,
+      vy: (Math.random() - 0.7) * 14,
+      size: Math.random() * 9 + 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * 360,
+      rSpeed: (Math.random() - 0.5) * 10
+    });
+  }
+  requestAnimationFrame(updateConfetti);
+}
+
+function updateConfetti() {
+  ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  let alive = false;
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.35;
+    p.rotation += p.rSpeed;
+    if (p.y < confettiCanvas.height) alive = true;
+
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate((p.rotation * Math.PI) / 180);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+    ctx.restore();
+  });
+  if (alive) requestAnimationFrame(updateConfetti);
+}
+
+/* Mascots (friendly mushroom & slime guides, drawn from the shared symbols above) */
+const Mascots = {
+  Owl:   `<svg class="w-full h-full anim-float"  viewBox="0 0 120 120"><use href="#npc-sage" width="120" height="120"/></svg>`,
+  Fox:   `<svg class="w-full h-full anim-bounce" viewBox="0 0 120 120"><use href="#npc-shop" width="120" height="120"/></svg>`,
+  Lion:  `<svg class="w-full h-full anim-bounce" viewBox="0 0 120 120"><use href="#npc-blue" width="120" height="120"/></svg>`,
+  Bunny: `<svg class="w-full h-full anim-wiggle" viewBox="0 0 120 120"><use href="#npc-pink" width="120" height="120"/></svg>`
+};
+
+/* Expanded Subjects & Randomized Quizzes Data Bank */
+const rawSubjects = [
+  {
+    id: 'counting', name: 'Counting', emoji: '🔢', desc: 'Explore numbers from 1 to 100.',
+    lesson: 'Counting means saying numbers in order. Let’s count together!',
+    questions: [
+      ['How many stars? ⭐ ⭐ ⭐', '3', ['2', '3', '4']],
+      ['What number comes after 6?', '7', ['5', '7', '9']],
+      ['What number comes before 10?', '9', ['8', '9', '11']],
+      ['How many apples? 🍎 🍎 🍎 🍎', '4', ['3', '4', '5']],
+      ['What number comes after 14?', '15', ['13', '15', '16']],
+      ['Which number is the largest?', '12', ['8', '10', '12']],
+      ['How many balloons? 🎈 🎈 🎈 🎈 🎈', '5', ['4', '5', '6']],
+      ['What number comes before 20?', '19', ['18', '19', '21']]
+    ]
+  },
+  {
+    id: 'addition', name: 'Addition', emoji: '🍎', desc: 'Put groups together to add.',
+    lesson: 'Addition means putting groups together. Plus sign (+) adds numbers!',
+    questions: [
+      ['2 + 3 = ?', '5', ['4', '5', '6']],
+      ['4 + 1 = ?', '5', ['3', '5', '7']],
+      ['6 + 2 = ?', '8', ['7', '8', '9']],
+      ['5 + 5 = ?', '10', ['9', '10', '11']],
+      ['3 + 4 = ?', '7', ['6', '7', '8']],
+      ['8 + 1 = ?', '9', ['7', '9', '10']],
+      ['7 + 3 = ?', '10', ['9', '10', '12']]
+    ]
+  },
+  {
+    id: 'subtraction', name: 'Subtraction', emoji: '➖', desc: 'Take away and find what remains.',
+    lesson: 'Subtraction means taking away. Minus sign (−) subtracts numbers!',
+    questions: [
+      ['5 − 2 = ?', '3', ['2', '3', '4']],
+      ['7 − 3 = ?', '4', ['3', '4', '5']],
+      ['9 − 1 = ?', '8', ['7', '8', '9']],
+      ['10 − 5 = ?', '5', ['4', '5', '6']],
+      ['6 − 4 = ?', '2', ['1', '2', '3']],
+      ['8 − 2 = ?', '6', ['5', '6', '7']]
+    ]
+  },
+  {
+    id: 'multiplication', name: 'Multiplication', emoji: '✖️', desc: 'Make equal groups and count them.',
+    lesson: 'Multiplication is adding equal groups together fast!',
+    questions: [
+      ['2 × 3 = ?', '6', ['5', '6', '8']],
+      ['4 × 2 = ?', '8', ['6', '8', '10']],
+      ['5 × 2 = ?', '10', ['7', '10', '12']],
+      ['3 × 3 = ?', '9', ['6', '9', '12']],
+      ['2 × 6 = ?', '12', ['10', '12', '14']],
+      ['4 × 3 = ?', '12', ['11', '12', '15']]
+    ]
+  },
+  {
+    id: 'division', name: 'Division', emoji: '🍪', desc: 'Share things equally.',
+    lesson: 'Division means sharing things into equal parts!',
+    questions: [
+      ['6 ÷ 2 = ?', '3', ['2', '3', '4']],
+      ['8 ÷ 4 = ?', '2', ['1', '2', '4']],
+      ['10 ÷ 2 = ?', '5', ['4', '5', '6']],
+      ['12 ÷ 3 = ?', '4', ['3', '4', '5']],
+      ['15 ÷ 5 = ?', '3', ['2', '3', '5']],
+      ['16 ÷ 4 = ?', '4', ['3', '4', '6']]
+    ]
+  },
+  {
+    id: 'colors', name: 'Colors', emoji: '🎨', desc: 'Discover colors all around you.',
+    lesson: 'Colors make the world vibrant and beautiful!',
+    questions: [
+      ['What color is a banana?', 'Yellow', ['Blue', 'Yellow', 'Purple']],
+      ['What color is grass usually?', 'Green', ['Green', 'Pink', 'Black']],
+      ['Mixing red and blue paint makes which color?', 'Purple', ['Orange', 'Purple', 'Green']],
+      ['What color is the bright sky on a sunny day?', 'Blue', ['Blue', 'Red', 'Yellow']],
+      ['What color is a strawberry?', 'Red', ['Red', 'Green', 'Orange']],
+      ['Mixing yellow and red makes which color?', 'Orange', ['Purple', 'Orange', 'Pink']]
+    ]
+  },
+  {
+    id: 'english', name: 'English', emoji: '📚', desc: 'Practice letters and simple words.',
+    lesson: 'English letters form sounds and words!',
+    questions: [
+      ['Which letter starts the word APPLE?', 'A', ['A', 'B', 'C']],
+      ['Which word is an animal?', 'Cat', ['Run', 'Cat', 'Blue']],
+      ['Choose the opposite of BIG.', 'Small', ['Tall', 'Small', 'Fast']],
+      ['Which letter starts the word DOG?', 'D', ['B', 'D', 'G']],
+      ['Choose the rhyming word for SUN.', 'Fun', ['Sun', 'Fun', 'Top']],
+      ['Which one is a action word (verb)?', 'Jump', ['Jump', 'Book', 'Pink']]
+    ]
+  }
+];
+
+function shuffle(array) {
+  let arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+const subjects = rawSubjects;
+
+const prizes = [
+  {id:'gummy', name:'Gummy Bears 🐻', emoji:'🍬', cost:150, desc:'A bag of sweet fruit gummy bears.'},
+  {id:'choc', name:'Chocolate Bar 🍫', emoji:'🍫', cost:300, desc:'Creamy milk chocolate treat.'},
+  {id:'chips', name:'Potato Chips 🥔', emoji:'🍟', cost:500, desc:'Crunchy salted potato chips.'},
+  {id:'icecream', name:'Ice Cream Cone 🍦', emoji:'🍦', cost:750, desc:'Delicious vanilla scoop with sprinkles.'},
+  {id:'doritos', name:'Doritos Nacho Cheese 🧀', emoji:'🔺', cost:1000, desc:'Crispy cheesy Doritos chips! (1000 Stars)'},
+  {id:'snackbox', name:'Ultimate Snack Box 📦', emoji:'🍿', cost:1500, desc:'A mega box filled with all your favorite snacks!'}
+];
+
+function save() {
+  localStorage.setItem('fla-data', JSON.stringify(data));
+  const el = document.getElementById('points');
+  if (el) el.textContent = data.points;
+
+  const info = levelInfo();
+  const pct = Math.round((info.exp / EXP_PER_LEVEL) * 100);
+  const lv = document.getElementById('level-num');
+  const fill = document.getElementById('exp-fill');
+  const txt = document.getElementById('exp-text');
+  if (lv) lv.textContent = info.lvl;
+  if (fill) fill.style.width = pct + '%';
+  if (txt) txt.textContent = pct + '%';
+}
+
+/* Explicit Global Bindings for HTML Inline Callbacks */
+window.startAppFromScreen = function() {
+  initAudio();
+  playClickSound();
+  startBGM();
+
+  const input = document.getElementById('player-name-input');
+  if (input && input.value.trim()) {
+    data.playerName = input.value.trim();
+    save();
+  }
+
+  const startScreen = document.getElementById('start-screen');
+  if (startScreen) {
+    startScreen.classList.add('opacity-0', 'pointer-events-none');
+    setTimeout(() => {
+      startScreen.style.display = 'none';
+    }, 700);
+  }
+
+  render();
+  speak("Welcome " + (data.playerName || "Super Learner") + "! Let's learn together!");
+};
+
+window.showStartScreenAgain = function() {
+  playClickSound();
+  stopSpeech();
+  const startScreen = document.getElementById('start-screen');
+  if (startScreen) {
+    startScreen.style.display = 'flex';
+    setTimeout(() => {
+      startScreen.classList.remove('opacity-0', 'pointer-events-none');
+    }, 50);
+  }
+};
+
+window.go = function(page) {
+  playClickSound();
+  stopSpeech();
+  current = page;
+  document.querySelectorAll('.navbtn').forEach(b => {
+    const active = b.dataset.page === page;
+    b.className = `navbtn btn-bubble font-extrabold px-4 py-1.5 rounded-xl text-sm ${active ? 'nav-on' : 'nav-off'}`;
+  });
+  render();
+};
+
+window.openSubject = function(id) {
+  playClickSound();
+  stopSpeech();
+  
+  const sub = subjects.find(s => s.id === id);
+  activeSubject = {
+    ...sub,
+    questions: shuffle(sub.questions).map(q => [q[0], q[1], shuffle(q[2])])
+  };
+  
+  qIndex = 0;
+  correct = 0;
+  answered = false;
+  trialAnswers = [];
+  window.finishHandled = false;   // each new trial must be recorded once
+  current = 'subject';
+  render();
+};
+
+window.toggleVoice = toggleVoice;
+window.toggleAudio = toggleAudio;
+
+/* Quest cards configuration */
+const gameCardsConfig = [
+  { id: 'colors', title: 'Colours', bg: 'bg-pink-100', barBg: 'bg-pink-500', icon: '🎨' },
+  { id: 'counting', title: 'Counting', bg: 'bg-sky-100', barBg: 'bg-sky-500', icon: '🔢' },
+  { id: 'addition', title: 'Addition', bg: 'bg-purple-100', barBg: 'bg-purple-500', icon: '🍎' },
+  { id: 'subtraction', title: 'Subtraction', bg: 'bg-amber-100', barBg: 'bg-amber-500', icon: '➖' },
+  { id: 'multiplication', title: 'Multiplication', bg: 'bg-rose-100', barBg: 'bg-rose-500', icon: '✖️' },
+  { id: 'division', title: 'Division', bg: 'bg-emerald-100', barBg: 'bg-emerald-500', icon: '🍪' },
+  { id: 'english', title: 'English', bg: 'bg-blue-100', barBg: 'bg-blue-500', icon: '📚' }
+];
+
+function homeHTML() {
+  return `
+    <div class="space-y-6 anim-pop relative">
+      <!-- Floating islands & sparkles -->
+      <svg class="absolute -top-6 right-2 w-28 pointer-events-none anim-island opacity-95 hidden sm:block"><use href="#island" width="112" height="51"/></svg>
+      <svg class="absolute top-1/2 -left-8 w-24 pointer-events-none anim-island-2 opacity-95 hidden lg:block"><use href="#island" width="96" height="44"/></svg>
+      <span class="absolute top-1/3 -right-3 text-2xl pointer-events-none anim-sparkle">✨</span>
+
+      <!-- Welcome Banner (quest-giver) -->
+      <div class="cloud-card p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4 text-center sm:text-left">
+          <div class="w-20 h-20 flex-shrink-0 bg-sky-100 rounded-2xl p-1 shadow-inner border-4 border-amber-300">
+            ${Mascots.Owl}
+          </div>
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-amber-950">
+              Welcome, <span class="text-orange-500 underline decoration-wavy">${esc(data.playerName || 'Super Learner')}</span>! ⭐
+            </h1>
+            <p class="text-amber-800 font-bold text-sm sm:text-base">
+              Pick a quest below, answer the questions and earn stars for yummy snacks!
+            </p>
+          </div>
+        </div>
+        <button onclick="speak('Welcome ' + (data.playerName || 'Super Learner') + '! Tap any quest to start learning!')" class="btn-bubble bg-amber-400 hover:bg-amber-300 text-amber-950 font-black px-4 py-2 rounded-2xl text-sm flex items-center gap-1.5 flex-shrink-0 border-2 border-amber-100">
+          🔊 Hear Greeting
+        </button>
+      </div>
+
+      <!-- Quest Board -->
+      <div class="flex items-end gap-3 pt-2">
+        <svg class="w-12 h-16" viewBox="0 0 90 130"><use href="#signpost" width="90" height="130"/></svg>
+        <h2 class="brand-text text-2xl sm:text-3xl font-black pb-1">Choose Your Quest!</h2>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        ${gameCardsConfig.map(card => {
+          const isDone = data.completed.includes(card.id);
+          const isUnfinished = !isDone && data.unfinished && data.unfinished.includes(card.id);
+          return `
+            <div onclick="openSubject('${card.id}')" class="game-card-box">
+              <div class="${card.bg} rounded-xl h-32 sm:h-40 mt-6 mx-1.5 flex flex-col items-center justify-center relative overflow-hidden group border-2 border-black/10">
+                <div class="text-5xl sm:text-6xl transform group-hover:scale-110 transition-transform">
+                  ${card.icon}
+                </div>
+                ${isDone ? `
+                  <span class="absolute top-2 right-2 bg-emerald-500 text-white font-black text-xs px-2 py-0.5 rounded-full shadow-md">
+                    ✓ Done
+                  </span>
+                ` : isUnfinished ? `
+                  <span class="absolute top-2 right-2 bg-amber-400 text-amber-950 font-black text-xs px-2 py-0.5 rounded-full shadow-md border border-amber-300">
+                    ⚠️ Unfinished
+                  </span>
+                ` : ''}
+              </div>
+              <div class="plank mt-2 mx-1.5 mb-1 py-2 px-1 text-center">
+                <span class="inline-block w-3 h-3 rounded-full ${card.barBg} mr-1.5 border border-black/20 align-middle"></span>
+                <span class="font-heading font-black text-base sm:text-lg tracking-wide uppercase align-middle">
+                  ${card.title}
+                </span>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- Shop teaser -->
+      <div class="cloud-card p-5 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+        <div class="flex items-center gap-4 text-center sm:text-left">
+          <div class="w-16 h-16 flex-shrink-0">${Mascots.Fox}</div>
+          <div>
+            <h3 class="text-lg font-black text-amber-950">Visit Pip's Snack Shop!</h3>
+            <p class="text-amber-800 font-bold text-xs sm:text-sm">Exchange your ⭐ <span class="font-black text-orange-600">${data.points}</span> stars for Doritos & delicious treats!</p>
+          </div>
+        </div>
+        <button onclick="go('shop')" class="btn-bubble nav-on font-black px-5 py-2.5 rounded-2xl text-sm flex-shrink-0">
+          Open Snack Shop ➔
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  if (!app) return;
+  if (current === 'home') app.innerHTML = homeHTML();
+  if (current === 'subject') app.innerHTML = subjectHTML();
+  if (current === 'progress') app.innerHTML = progressHTML();
+  if (current === 'shop') app.innerHTML = shopHTML();
+  if (current === 'rewards') app.innerHTML = rewardsHTML();
+  save();
+  if (current === 'progress') loadTrialHistory();
+}
+
+function subjectHTML() {
+  let s = activeSubject;
+  if (!s) return homeHTML();
+  const progressPercent = Math.round((qIndex / s.questions.length) * 100);
+
+  const cleanLesson = s.lesson.replace(/'/g, "");
+
+  return `
+    <div class="space-y-6 anim-pop">
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <button onclick="go('home')" class="btn-bubble nav-off font-extrabold px-4 py-2 rounded-2xl text-sm flex items-center gap-1">
+          <span>⬅</span> Back to Quests
+        </button>
+        <span class="nav-on font-black px-4 py-1.5 rounded-2xl text-base flex items-center gap-2 font-heading">
+          <span>${s.emoji}</span> ${s.name}
+        </span>
+      </div>
+
+      <div class="cloud-card p-6 sm:p-8 space-y-6">
+        <div class="bg-amber-50 border-4 border-amber-300 rounded-2xl p-5 flex flex-col sm:flex-row gap-4 items-center">
+          <div class="w-24 h-24 flex-shrink-0 bg-sky-100 rounded-2xl p-2 shadow-sm border-2 border-sky-200">
+            ${Mascots.Owl}
+          </div>
+          <div class="space-y-1 text-center sm:text-left flex-grow">
+            <h3 class="text-lg font-black text-amber-900 flex items-center justify-center sm:justify-start gap-1">
+              📖 Barnaby's Lesson
+            </h3>
+            <p class="text-amber-900 font-bold text-base">${s.lesson}</p>
+            <button onclick="speak('${cleanLesson}')" class="btn-bubble bg-amber-400 text-amber-950 font-black text-xs px-3 py-1 rounded-xl mt-1 inline-flex items-center gap-1 border-2 border-amber-100">
+              🔊 Read Lesson
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex justify-between font-black text-sm text-amber-900">
+            <span>Quest Progress</span>
+            <span>Question ${Math.min(qIndex + 1, s.questions.length)} of ${s.questions.length}</span>
+          </div>
+          <div class="exp-track h-5 p-0.5">
+            <div class="exp-fill-quiz" style="width:${progressPercent}%"></div>
+          </div>
+        </div>
+
+        ${qIndex < s.questions.length ? questionHTML(s) : finishHTML(s)}
+      </div>
+    </div>
+  `;
+}
+
+function showModal(title, msg, icon = '🎉', confirmCb = null, confirmLabel = 'Yes, Redeem!') {
+  const modal = document.getElementById('custom-modal');
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-msg').textContent = msg;
+  document.getElementById('modal-icon').textContent = icon;
+  const actions = document.getElementById('modal-actions');
+  actions.innerHTML = '';
+
+  if (confirmCb) {
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'btn-bubble nav-off font-extrabold px-5 py-2.5 rounded-2xl';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.onclick = () => { playClickSound(); modal.classList.add('hidden'); };
+
+    const okBtn = document.createElement('button');
+    okBtn.className = 'btn-bubble nav-on font-extrabold px-6 py-2.5 rounded-2xl';
+    okBtn.textContent = confirmLabel;
+    okBtn.onclick = () => { playClickSound(); modal.classList.add('hidden'); confirmCb(); };
+
+    actions.appendChild(cancelBtn);
+    actions.appendChild(okBtn);
+  } else {
+    const okBtn = document.createElement('button');
+    okBtn.className = 'btn-bubble nav-on font-extrabold px-6 py-2.5 rounded-2xl';
+    okBtn.textContent = 'Awesome!';
+    okBtn.onclick = () => { playClickSound(); modal.classList.add('hidden'); };
+    actions.appendChild(okBtn);
+  }
+  modal.classList.remove('hidden');
+}
+
+function questionHTML(s) {
+  let q = s.questions[qIndex];
+  const cleanQText = q[0].replace(/'/g, "");
+
+  setTimeout(() => {
+    if (!answered) speak("Question: " + cleanQText);
+  }, 400);
+
+  return `
+    <div class="space-y-6 pt-2">
+      <div class="relative text-2xl sm:text-3xl font-black text-amber-950 text-center py-6 px-4 bg-sky-50 rounded-2xl border-4 border-sky-200">
+        ${q[0]}
+        <button onclick="speak('${cleanQText}')" class="absolute top-2 right-2 btn-bubble bg-amber-400 text-amber-950 font-black text-xs px-3 py-1.5 rounded-xl flex items-center gap-1 border-2 border-amber-100">
+          🔊 Read Question
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        ${q[2].map(a => {
+          const cleanA = a.replace(/'/g, "");
+          return `
+            <button onclick="choose('${cleanA}')" class="answer-btn btn-bubble maple-answer font-black text-xl py-5 px-4 rounded-2xl text-center">
+              ${a}
+            </button>
+          `;
+        }).join('')}
+      </div>
+
+      <div id="feedback" class="min-h-[50px] flex items-center justify-center font-black text-lg text-center rounded-2xl px-4 py-2"></div>
+
+      <div class="text-center pt-2">
+        <button id="next" style="display:none" onclick="nextQuestion()" class="btn-bubble nav-on font-black text-lg px-8 py-3.5 rounded-2xl">
+          Next Question ➔
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function choose(answer) {
+  if (answered) return;
+  answered = true;
+  stopSpeech();
+  let q = activeSubject.questions[qIndex];
+  let ok = answer === q[1];
+  const fb = document.getElementById('feedback');
+
+  // Record this answer for the trial being played
+  trialAnswers.push({ q: q[0], chosen: answer, right: q[1], ok });
+
+  document.querySelectorAll('.answer-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent.trim() === q[1]) {
+      b.classList.add('is-correct', 'anim-pop');
+    }
+  });
+
+  if (ok) {
+    correct++;
+    addPoints(5);
+    playCorrectSound();
+    playCoinsSound();
+    fb.className = 'min-h-[50px] flex items-center justify-center font-black text-lg text-center rounded-2xl px-4 py-2 bg-emerald-100 text-emerald-900 border-2 border-emerald-300 anim-pop';
+    fb.innerHTML = '🎉 Great job! You earned +5 stars! ⭐';
+    
+    const happyPhrases = [
+      "Yay! Super job!",
+      "Woohoo! You got it right!",
+      "Awesome answer!",
+      "Great job! You earned five stars!"
+    ];
+    speak(happyPhrases[Math.floor(Math.random() * happyPhrases.length)]);
+  } else {
+    playWrongSound();
+    fb.className = 'min-h-[50px] flex items-center justify-center font-black text-lg text-center rounded-2xl px-4 py-2 bg-amber-100 text-amber-900 border-2 border-amber-300 anim-wobble';
+    fb.innerHTML = `💛 Good try! The correct answer is <strong>${q[1]}</strong>.`;
+    speak("Good try! The correct answer is " + q[1] + ". You can do it!");
+  }
+
+  document.getElementById('next').style.display = 'inline-block';
+  save();
+}
+
+function nextQuestion() {
+  playClickSound();
+  stopSpeech();
+  qIndex++;
+  answered = false;
+  render();
+}
+
+function finishHTML(s) {
+  let perfect = correct === s.questions.length;
+  let bonus = perfect ? 20 : 0;
+  
+  if (!window.finishHandled) {
+    if (perfect) {
+      if (!data.completed.includes(s.id)) data.completed.push(s.id);
+      if (data.unfinished) data.unfinished = data.unfinished.filter(id => id !== s.id);
+      addPoints(10 + bonus);
+    } else {
+      if (!data.unfinished) data.unfinished = [];
+      if (!data.unfinished.includes(s.id)) data.unfinished.push(s.id);
+      data.completed = data.completed.filter(id => id !== s.id);
+    }
+    
+    window.finishHandled = true;
+    save();
+
+    // Save this trial to the database
+    const total = s.questions.length;
+    dbAddTrial({
+      player: data.playerName || 'Super Learner',
+      subjectId: s.id,
+      subjectName: s.name,
+      correct,
+      total,
+      percent: Math.round((correct / total) * 100),
+      perfect,
+      stars: correct * 5 + (perfect ? 10 + bonus : 0),
+      timestamp: Date.now(),
+      answers: trialAnswers.slice()
+    }).then(t => {
+      const el = document.getElementById('trial-note');
+      if (el) el.textContent = `📝 Trial #${t.attempt} saved to your progress record`;
+    }).catch(() => {});
+
+    launchConfetti();
+    playFanfareSound();
+    
+    if (perfect) {
+      speak("Awesome! Perfect score! You finished " + s.name + " and earned bonus stars!");
+    } else {
+      speak("Good effort! You got " + correct + " out of " + s.questions.length + " right. Try again to mark it finished!");
+    }
+  }
+
+  return `
+    <div class="text-center py-6 space-y-6 anim-pop">
+      <div class="w-32 h-32 mx-auto bg-sky-100 rounded-full p-2 border-4 border-amber-300">
+        ${Mascots.Owl}
+      </div>
+      
+      <div class="space-y-2">
+        <h2 class="text-3xl font-black text-amber-950">
+          ${perfect ? `🎊 Quest Complete: ${s.name}!` : `⚠️ ${s.name} Unfinished`}
+        </h2>
+        <p class="text-amber-800 font-bold text-lg">
+          You got <span class="text-amber-950 font-black text-xl">${correct}</span> out of <span class="text-amber-950 font-black text-xl">${s.questions.length}</span> questions right!
+        </p>
+        <p id="trial-note" class="text-amber-600 font-bold text-sm min-h-[20px]"></p>
+      </div>
+
+      <div class="${perfect ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-amber-50 border-amber-300 text-amber-900'} border-4 rounded-2xl p-4 max-w-md mx-auto font-black text-base">
+        ${perfect ? `🎉 Perfect Score! Quest Finished! (+${10 + bonus} stars)` : `⚠️ You got some questions wrong! Replay and get 100% to finish this quest.`}
+      </div>
+
+      <div class="flex justify-center gap-3">
+        <button onclick="window.finishHandled=false; openSubject('${s.id}')" class="btn-bubble bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-base px-6 py-3 rounded-2xl border-2 border-amber-100">
+          🔄 Replay Quiz
+        </button>
+        <button onclick="window.finishHandled=false; stopSpeech(); go('home')" class="btn-bubble nav-on font-black text-base px-6 py-3 rounded-2xl">
+          Back to Home 🏠
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function progressHTML() {
+  const info = levelInfo();
+  return `
+    <div class="space-y-6 anim-pop">
+      <div class="flex justify-between items-center flex-wrap gap-2">
+        <h1 class="brand-text text-3xl font-black">📈 My Progress Dashboard</h1>
+        <button onclick="speak('Here is your progress dashboard! You have ' + data.points + ' total stars.')" class="btn-bubble nav-off font-extrabold px-3 py-1.5 rounded-xl text-sm">
+          🔊 Read Dashboard
+        </button>
+      </div>
+
+      <section class="cloud-card p-6 sm:p-8 space-y-8">
+        <div class="flex items-center gap-4 bg-sky-50 p-4 rounded-2xl border-4 border-sky-200">
+          <div class="w-20 h-20 flex-shrink-0 bg-white rounded-2xl p-1 shadow-sm">
+            ${Mascots.Lion}
+          </div>
+          <div>
+            <h3 class="text-lg font-black text-amber-900">Leo's Progress Report · Lv.${info.lvl}</h3>
+            <p class="text-amber-800 font-bold text-sm">Get 100% on a quiz to turn it green! Unfinished subjects will stay yellow.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-amber-50 border-4 border-amber-300 rounded-2xl p-5 text-center">
+            <p class="text-amber-700 font-bold text-sm uppercase tracking-wider">Total Star Balance</p>
+            <div class="text-4xl font-black text-amber-900 mt-1">⭐ ${data.points}</div>
+          </div>
+          <div class="bg-emerald-50 border-4 border-emerald-300 rounded-2xl p-5 text-center">
+            <p class="text-emerald-700 font-bold text-sm uppercase tracking-wider">Quests Finished</p>
+            <div class="text-4xl font-black text-emerald-900 mt-1">${data.completed.length} / ${subjects.length}</div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h2 class="text-xl font-black text-amber-900">Subject Masteries</h2>
+          <div class="space-y-4">
+            ${subjects.map(s => {
+              const isDone = data.completed.includes(s.id);
+              const isUnfinished = !isDone && data.unfinished && data.unfinished.includes(s.id);
+              
+              return `
+                <div class="space-y-1.5">
+                  <div class="flex justify-between items-center font-bold text-sm">
+                    <span class="text-amber-950 font-black text-base flex items-center gap-2">
+                      <span>${s.emoji}</span> ${s.name}
+                    </span>
+                    <span class="${isDone ? 'text-emerald-600 font-black' : isUnfinished ? 'text-amber-600 font-black bg-amber-100 px-2 py-0.5 rounded-lg border border-amber-300' : 'text-amber-400'}">
+                      ${isDone ? '✓ Finished' : isUnfinished ? '⚠️ Unfinished' : 'Not started yet'}
+                    </span>
+                  </div>
+                  <div class="exp-track h-4 p-0.5">
+                    <div class="h-full ${isDone ? 'bg-emerald-400' : isUnfinished ? 'bg-amber-400' : 'bg-gray-500'} rounded-full transition-all duration-500" style="width:${isDone ? '100' : isUnfinished ? '50' : '0'}%"></div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      </section>
+
+      <!-- Trial History (loaded from the database) -->
+      <section class="cloud-card p-6 sm:p-8 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h2 class="text-xl font-black text-amber-900">🗂️ Trial History</h2>
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="history-player" onchange="loadTrialHistory()" class="font-black text-sm text-amber-900 bg-amber-50 border-2 border-amber-300 rounded-xl px-3 py-1.5 focus:outline-none"></select>
+            <button onclick="exportTrialsCSV()" class="btn-bubble bg-sky-400 hover:bg-sky-300 text-sky-950 font-black text-xs px-3 py-2 rounded-xl">⬇ Export CSV</button>
+            <button onclick="confirmClearTrials()" class="btn-bubble bg-rose-100 hover:bg-rose-200 text-rose-800 font-black text-xs px-3 py-2 rounded-xl">🗑 Clear</button>
+          </div>
+        </div>
+        <div id="trial-history" class="text-amber-600 font-bold text-sm">Loading trials…</div>
+      </section>
+    </div>
+  `;
+}
+
+/* Fill the Trial History section from the database */
+async function loadTrialHistory() {
+  const box = document.getElementById('trial-history');
+  const sel = document.getElementById('history-player');
+  if (!box || !sel) return;
+
+  const all = await dbGetAllTrials();
+
+  // Player dropdown: everyone with trials, plus the current player
+  const prev = sel.value || data.playerName || 'Super Learner';
+  const players = Array.from(new Set([data.playerName || 'Super Learner', ...all.map(t => t.player)]));
+  sel.innerHTML = players.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
+  sel.value = players.includes(prev) ? prev : players[0];
+  const player = sel.value;
+
+  const mine = all.filter(t => t.player === player).sort((a, b) => a.timestamp - b.timestamp);
+  if (!mine.length) {
+    box.innerHTML = `<p class="text-amber-600 font-bold">No trials recorded for <span class="font-black">${esc(player)}</span> yet. Finish a quiz to start the record!</p>`;
+    return;
+  }
+
+  const perfectCount = mine.filter(t => t.perfect).length;
+  const overallAvg = Math.round(mine.reduce((n, t) => n + t.percent, 0) / mine.length);
+
+  const perSubject = subjects.map(s => {
+    const trials = mine.filter(t => t.subjectId === s.id);
+    if (!trials.length) return '';
+    const best = Math.max(...trials.map(t => t.percent));
+    const last = trials[trials.length - 1].percent;
+    const first = trials[0].percent;
+    const avg = Math.round(trials.reduce((n, t) => n + t.percent, 0) / trials.length);
+    const delta = last - first;
+    const trend = trials.length < 2 ? '' :
+      delta > 0 ? `<span class="text-emerald-600">▲ +${delta}% since first try</span>` :
+      delta < 0 ? `<span class="text-rose-500">▼ ${delta}% since first try</span>` :
+      `<span class="text-amber-400">● same as first try</span>`;
+    const bars = trials.slice(-10).map(t => `
+      <div title="Trial #${t.attempt}: ${t.correct}/${t.total}" class="w-3 rounded-t-sm ${t.perfect ? 'bg-emerald-400' : 'bg-amber-400'}" style="height:${Math.max(4, Math.round(t.percent * 0.36))}px"></div>
+    `).join('');
+    return `
+      <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 flex flex-wrap items-end justify-between gap-3">
+        <div class="space-y-0.5">
+          <div class="font-black text-amber-950 text-base">${s.emoji} ${s.name}</div>
+          <div class="text-xs font-bold text-amber-800">${trials.length} trial${trials.length > 1 ? 's' : ''} · best ${best}% · avg ${avg}% · latest ${last}%</div>
+          <div class="text-xs font-black">${trend}</div>
+        </div>
+        <div class="flex items-end gap-1 h-9" aria-label="Last scores">${bars}</div>
+      </div>
+    `;
+  }).join('');
+
+  const recent = mine.slice(-10).reverse().map(t => `
+    <tr class="border-t border-amber-200">
+      <td class="py-1.5 pr-3 whitespace-nowrap">${new Date(t.timestamp).toLocaleString()}</td>
+      <td class="py-1.5 pr-3 font-black text-amber-950">${esc(t.subjectName)}</td>
+      <td class="py-1.5 pr-3 text-center">#${t.attempt}</td>
+      <td class="py-1.5 pr-3 text-center font-black ${t.perfect ? 'text-emerald-600' : 'text-amber-600'}">${t.correct}/${t.total} (${t.percent}%)</td>
+      <td class="py-1.5 text-right">⭐ ${t.stars}</td>
+    </tr>
+  `).join('');
+
+  box.innerHTML = `
+    <div class="grid grid-cols-3 gap-3 text-center">
+      <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-3"><div class="text-xs font-bold text-sky-700 uppercase">Trials</div><div class="text-2xl font-black text-sky-900">${mine.length}</div></div>
+      <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-3"><div class="text-xs font-bold text-emerald-700 uppercase">Perfect</div><div class="text-2xl font-black text-emerald-800">${perfectCount}</div></div>
+      <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-3"><div class="text-xs font-bold text-amber-700 uppercase">Avg Score</div><div class="text-2xl font-black text-amber-800">${overallAvg}%</div></div>
+    </div>
+    <div class="space-y-3 mt-4">${perSubject}</div>
+    <h3 class="font-black text-amber-900 mt-5 mb-2">Recent Trials</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs sm:text-sm font-bold text-amber-800">
+        <thead><tr class="text-left text-amber-500 uppercase text-xs"><th class="pb-1">When</th><th class="pb-1">Subject</th><th class="pb-1 text-center">Try</th><th class="pb-1 text-center">Score</th><th class="pb-1 text-right">Stars</th></tr></thead>
+        <tbody>${recent}</tbody>
+      </table>
+    </div>
+  `;
+}
+window.loadTrialHistory = loadTrialHistory;
+
+/* Export every recorded trial (all players) as a CSV file */
+async function exportTrialsCSV() {
+  playClickSound();
+  const all = await dbGetAllTrials();
+  if (!all.length) {
+    showModal('Nothing to export', 'Finish a quiz first and your trials will be saved here.', '📝');
+    return;
+  }
+  const cell = v => '"' + String(v).replace(/"/g, '""') + '"';
+  const header = ['Player', 'Subject', 'Attempt', 'Correct', 'Total', 'Percent', 'Perfect', 'Stars', 'Date'];
+  const rows = all.sort((a, b) => a.timestamp - b.timestamp).map(t => [
+    t.player, t.subjectName, t.attempt, t.correct, t.total, t.percent, t.perfect ? 'yes' : 'no', t.stars, new Date(t.timestamp).toISOString()
+  ].map(cell).join(','));
+  const blob = new Blob([[header.map(cell).join(','), ...rows].join('\n')], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'fun-learning-trials.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+window.exportTrialsCSV = exportTrialsCSV;
+
+function confirmClearTrials() {
+  playClickSound();
+  const sel = document.getElementById('history-player');
+  const player = sel ? sel.value : (data.playerName || 'Super Learner');
+  showModal(
+    'Clear trial history?',
+    `This deletes every saved trial for ${player}. Stars and prizes are not affected.`,
+    '🗑️',
+    async () => {
+      await dbDeleteTrials(player);
+      loadTrialHistory();
+    },
+    'Yes, Clear'
+  );
+}
+window.confirmClearTrials = confirmClearTrials;
+
+function shopHTML() {
+  return `
+    <div class="space-y-6 anim-pop">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 class="brand-text text-3xl font-black">🍿 Snack & Prize Shop</h1>
+          <p class="text-white font-bold text-sm" style="text-shadow:0 2px 0 rgba(60,35,10,.6)">Exchange your earned stars for tasty virtual snacks like Doritos!</p>
+        </div>
+        <div class="coin-badge rounded-2xl px-4 py-2 font-black text-lg self-start sm:self-auto">
+          Balance: ⭐ ${data.points}
+        </div>
+      </div>
+
+      <div class="cloud-card p-5 flex items-center gap-4">
+        <div class="w-20 h-20 flex-shrink-0 bg-emerald-50 rounded-2xl p-1 shadow-sm border-2 border-emerald-200">
+          ${Mascots.Fox}
+        </div>
+        <div>
+          <h3 class="text-lg font-black text-amber-950">Pip's Snack Counter</h3>
+          <p class="text-amber-800 font-bold text-sm">Save up 1000 stars to redeem the Doritos Nacho Cheese pack!</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        ${prizes.map(p => {
+          const canAfford = data.points >= p.cost;
+          const isDoritos = p.id === 'doritos';
+          return `
+            <article class="cloud-card p-5 flex flex-col justify-between ${isDoritos ? 'ring-4 ring-red-400' : ''}">
+              <div>
+                <div class="w-16 h-16 ${isDoritos ? 'bg-red-100' : 'bg-amber-100'} border-2 border-amber-300 rounded-2xl flex items-center justify-center text-4xl mb-3">
+                  ${p.emoji}
+                </div>
+                <h3 class="text-xl font-extrabold text-amber-950 mb-1">${p.name}</h3>
+                <p class="text-amber-700 font-bold text-sm mb-4">${p.desc}</p>
+              </div>
+              <div class="space-y-3">
+                <div class="font-black text-amber-900 text-lg">
+                  ⭐ ${p.cost} stars
+                </div>
+                <button ${!canAfford ? 'disabled' : ''} onclick="redeem('${p.id}')" class="w-full btn-bubble py-3 rounded-2xl font-black text-sm ${
+                  canAfford ? 'nav-on' : 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
+                }">
+                  ${canAfford ? 'Redeem Snack 🎉' : 'Need More Stars ⭐'}
+                </button>
+              </div>
+            </article>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function redeem(id) {
+  let p = prizes.find(x => x.id === id);
+  if (data.points < p.cost) {
+    playWrongSound();
+    showModal('Need More Stars!', 'Complete more activities and quizzes to earn enough stars for this prize!', '⭐');
+    return;
+  }
+
+  showModal(
+    'Redeem Prize?',
+    `Would you like to spend ${p.cost} stars to unlock the ${p.name}?`,
+    p.emoji,
+    () => {
+      data.points -= p.cost;
+      data.redeemed.push({
+        id: p.id,
+        name: p.name,
+        emoji: p.emoji,
+        cost: p.cost,
+        date: new Date().toLocaleDateString()
+      });
+      save();
+      launchConfetti();
+      playCoinsSound();
+      playFanfareSound();
+      render();
+      showModal('Reward Redeemed! 🎉', `You unlocked the ${p.name}! Check it out in your Rewards Shelf.`, p.emoji);
+    }
+  );
+}
+
+function rewardsHTML() {
+  return `
+    <div class="space-y-6 anim-pop">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="brand-text text-3xl font-black">🏆 My Rewards Shelf</h1>
+          <p class="text-white font-bold text-sm" style="text-shadow:0 2px 0 rgba(60,35,10,.6)">Sparkle the Slime is keeping your collection safe!</p>
+        </div>
+      </div>
+
+      <div class="cloud-card p-5 flex items-center gap-4">
+        <div class="w-20 h-20 flex-shrink-0 bg-pink-50 rounded-2xl p-1 shadow-sm border-2 border-pink-200">
+          ${Mascots.Bunny}
+        </div>
+        <div>
+          <h3 class="text-lg font-black text-amber-950">Sparkle's Showcase</h3>
+          <p class="text-amber-800 font-bold text-sm">Look at all the awesome rewards you've collected!</p>
+        </div>
+      </div>
+
+      ${data.redeemed.length ? `
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          ${data.redeemed.map(p => `
+            <article class="cloud-card p-5 flex items-center gap-4">
+              <div class="w-16 h-16 bg-pink-100 border-2 border-pink-200 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">
+                ${p.emoji}
+              </div>
+              <div>
+                <h3 class="text-lg font-extrabold text-amber-950">${p.name}</h3>
+                <span class="inline-block bg-emerald-100 text-emerald-800 font-extrabold text-xs px-2.5 py-0.5 rounded-full mt-1">
+                  ✓ Unlocked
+                </span>
+                <p class="text-amber-600 font-bold text-xs mt-1">${p.cost} stars · ${p.date}</p>
+              </div>
+            </article>
+          `).join('')}
+        </div>
+      ` : `
+        <div class="cloud-card p-8 text-center space-y-4">
+          <div class="text-6xl">🎈</div>
+          <h3 class="text-2xl font-black text-amber-900">Your Reward Shelf is Waiting!</h3>
+          <p class="text-amber-700 font-bold max-w-md mx-auto">
+            You haven't unlocked any prizes yet. Visit the Prize Shop to turn your hard-earned stars into fun rewards!
+          </p>
+          <button onclick="go('shop')" class="btn-bubble nav-on font-black px-6 py-3 rounded-2xl text-base">
+            Go to Prize Shop ➔
+          </button>
+        </div>
+      `}
+    </div>
+  `;
+}
+
+// Initial Page Render
+window.onload = function() {
+  // Open the database early so the first save is instant
+  openDB().catch(() => {});
+
+  render();
+
+  const unlockAudio = () => {
+    initAudio();
+    if ('speechSynthesis' in window && window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.getVoices();
+    }
+  };
+  document.body.addEventListener('click', unlockAudio, { once: true });
+  document.body.addEventListener('touchstart', unlockAudio, { once: true });
+
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.getVoices();
+    };
+  }
+};
+</script>
+</body>
+</html>
